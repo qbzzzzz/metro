@@ -8,40 +8,40 @@ import plateau.Controleur;
 
 public class PanelConfiguration extends JPanel implements ActionListener
 {
-	private FrameConfiguration frmConfiguration;
-	private FrameCreation frmCreation;
-	private Controleur ctrl;
-	private Image imgBackground;
+	private FrameConfiguration 	frmConfiguration;
+	private FrameCreation 		frmCreation;
+	private Controleur 			ctrl;
+	private Image 				imgBackground;
 
-	private JPanel panelConfiguration;
+	private JPanel 				panelConfiguration;
 
-	private JLabel lblLargeur;
-	private JLabel lblHauteur;
-	private JLabel lblJoueurs;
-	private JLabel lblMetro;
-	private JLabel lblArrondissments;
-	private JLabel lblTailleCases;
+	private JLabel 				lblLargeur;
+	private JLabel 				lblHauteur;
+	private JLabel 				lblJoueurs;
+	private JLabel 				lblMetro;
+	private JLabel 				lblArrondissments;
+	private JLabel 				lblTailleCases;
 
-	public static JTextField txtLargeur;
-	public static JTextField txtHauteur;
-	public static JTextField txtJoueurs;
-	public static JTextField txtMetro;
-	public static JTextField txtArrondissments;
-	public static JTextField txtTailleCases;
+	public static JTextField 	txtLargeur;
+	public static JTextField 	txtHauteur;
+	public static JTextField 	txtJoueurs;
+	public static JTextField 	txtMetro;
+	public static JTextField 	txtArrondissments;
+	public static JTextField 	txtTailleCases;
 
-	private JButton btnValider;
-	private JButton btnAnnuler;
+	private JButton 			btnValider;
+	private JButton 			btnAnnuler;
 
 	public PanelConfiguration(FrameConfiguration frmConfiguration, Controleur ctrl)
 	{
-		this.frmConfiguration = frmConfiguration;
-		this.ctrl = ctrl;
+		this.frmConfiguration 	= frmConfiguration;
+		this.ctrl 				= ctrl;
 
 		// Charger l'image de fond fond2.png
-		String bgPath = this.ctrl.getImageFond2();
-		if (bgPath != null)
+		String image = this.ctrl.getImageFond2();
+		if (image != null)
 		{
-			this.imgBackground = new ImageIcon(bgPath).getImage();
+			this.imgBackground = new ImageIcon(image).getImage();
 		}
 
 		this.setLayout(new BorderLayout());
@@ -54,37 +54,38 @@ public class PanelConfiguration extends JPanel implements ActionListener
 		/*-------------------------*/
 		/* Création des composants */
 		/*-------------------------*/
+
 		Font labelFont = new Font("Arial", Font.BOLD, 13);
 
 		this.lblLargeur = new JLabel("Taille en largeur :");
-		this.lblLargeur.setForeground(Color.WHITE);
-		this.lblLargeur.setFont(labelFont);
-		txtLargeur = new JTextField();
+		this.lblLargeur	.setForeground(Color.WHITE);
+		this.lblLargeur	.setFont(labelFont);
+		txtLargeur 		= new JTextField();
 
 		this.lblHauteur = new JLabel("Taille en hauteur :");
-		this.lblHauteur.setForeground(Color.WHITE);
-		this.lblHauteur.setFont(labelFont);
-		txtHauteur = new JTextField();
+		this.lblHauteur	.setForeground(Color.WHITE);
+		this.lblHauteur	.setFont(labelFont);
+		txtHauteur 		= new JTextField();
 
 		this.lblJoueurs = new JLabel("Nombre de joueurs (max 4) :");
-		this.lblJoueurs.setForeground(Color.WHITE);
-		this.lblJoueurs.setFont(labelFont);
-		txtJoueurs = new JTextField();
+		this.lblJoueurs	.setForeground(Color.WHITE);
+		this.lblJoueurs	.setFont(labelFont);
+		txtJoueurs 		= new JTextField();
 
-		this.lblMetro = new JLabel("Nombre de types de métro (max 6) :");
-		this.lblMetro.setForeground(Color.WHITE);
-		this.lblMetro.setFont(labelFont);
-		txtMetro = new JTextField();
+		this.lblMetro 	= new JLabel("Nombre de types de métro (max 6) :");
+		this.lblMetro	.setForeground(Color.WHITE);
+		this.lblMetro	.setFont(labelFont);
+		txtMetro 		= new JTextField();
 
-		this.lblArrondissments = new JLabel("Nombre d'arrondissements (max 20) :");
-		this.lblArrondissments.setForeground(Color.WHITE);
-		this.lblArrondissments.setFont(labelFont);
-		txtArrondissments = new JTextField();
+		this.lblArrondissments 	= new JLabel("Nombre d'arrondissements (max 20) :");
+		this.lblArrondissments	.setForeground(Color.WHITE);
+		this.lblArrondissments	.setFont(labelFont);
+		txtArrondissments 		= new JTextField();
 
 		this.lblTailleCases = new JLabel("Taille des cases :");
-		this.lblTailleCases.setForeground(Color.WHITE);
-		this.lblTailleCases.setFont(labelFont);
-		txtTailleCases = new JTextField();
+		this.lblTailleCases	.setForeground(Color.WHITE);
+		this.lblTailleCases	.setFont(labelFont);
+		txtTailleCases 		= new JTextField();
 
 		this.btnValider = new JButton("Valider");
 		this.btnAnnuler = new JButton("Annuler");
@@ -129,7 +130,6 @@ public class PanelConfiguration extends JPanel implements ActionListener
 		this.btnValider.addActionListener(this);
 	}
 
-	@Override
 	protected void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
@@ -159,12 +159,13 @@ public class PanelConfiguration extends JPanel implements ActionListener
 
 			try
 			{
-				int largeur = Integer.parseInt(txtLargeur.getText());
-				int hauteur = Integer.parseInt(txtHauteur.getText());
-				int nbJoueurs = Integer.parseInt(txtJoueurs.getText());
-				int nbMetro = Integer.parseInt(txtMetro.getText());
-				int nbArrondissements = Integer.parseInt(txtArrondissments.getText());
-				int tailleCases = Integer.parseInt(txtTailleCases.getText());
+				int largeur 			= Integer.parseInt(txtLargeur		.getText());
+				int hauteur 			= Integer.parseInt(txtHauteur		.getText());
+				int nbJoueurs 			= Integer.parseInt(txtJoueurs		.getText());
+				int nbMetro 			= Integer.parseInt(txtMetro			.getText());
+				int nbArrondissements 	= Integer.parseInt(txtArrondissments.getText());
+				int tailleCases 		= Integer.parseInt(txtTailleCases	.getText());
+
 				if (nbMetro > 6)
 				{
 					System.out.println("Le nombre de types de métro ne peut pas dépasser 6.");
@@ -174,6 +175,7 @@ public class PanelConfiguration extends JPanel implements ActionListener
 				{
 					System.out.println("Le nombre de joueurs ne peut pas dépasser 4.");
 				}
+
 				if (nbArrondissements > 20)
 				{
 					System.out.println("Le nombre d'arrondissements ne peut pas dépasser 20.");
@@ -194,13 +196,14 @@ public class PanelConfiguration extends JPanel implements ActionListener
 					System.out.println("La hauteur doit être cohérente avec le nombre de joueurs.");
 				}
 
-				this.ctrl.initialiserPlateau(largeur, hauteur);
-				this.ctrl.setConfigJeu(nbJoueurs, nbMetro);
-				this.frmCreation = new FrameCreation(this.ctrl);
+				this.ctrl				.initialiserPlateau(largeur, hauteur);
+				this.ctrl				.setConfigJeu(nbJoueurs, nbMetro);
+				this.frmCreation 		= new FrameCreation(this.ctrl);
 
-				this.frmConfiguration.setVisible(false);
-				this.frmCreation.setVisible(true);
+				this.frmConfiguration	.setVisible(false);
+				this.frmCreation		.setVisible(true);
 			}
+
 			catch (NumberFormatException ex)
 			{
 				System.out.println("Veuillez entrer uniquement des nombres.");

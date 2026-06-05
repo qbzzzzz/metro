@@ -15,7 +15,7 @@ public class FrameAccueil extends JFrame
         this.setDefaultCloseOperation ( JFrame.EXIT_ON_CLOSE );
 
         this.pack();
-        this.setLocationRelativeTo(null); // Centre la fenêtre sur l'écran
+        this.setLocationRelativeTo(null); // Centre la fenêtre
         this.setVisible ( true );
     }
 }

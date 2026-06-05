@@ -12,39 +12,31 @@ import java.io.FileOutputStream;
 
 public class PanelCreation extends JPanel implements MouseListener, MouseMotionListener, ActionListener
 {
-	private FrameConfiguration frmConfiguration;
-	private FrameCreation frmCreation;
-	private Controleur ctrl;
+	private FrameConfiguration 	frmConfiguration;
+	private FrameCreation 		frmCreation;
+	private Controleur 			ctrl;
 
-	private JPanel panelPlateau;
-	private JPanel panelArrondissments;
-	private JPanel panelBoutons;
+	private JPanel 				panelPlateau;
+	private JPanel 				panelArrondissments;
+	private JPanel 				panelBoutons;
 	private JPanel[] tabCases = new JPanel[ Integer.parseInt(PanelConfiguration.txtLargeur.getText()) * Integer.parseInt(PanelConfiguration.txtHauteur.getText()) ];
 
-	private int grillelargeur		   = Integer.parseInt(PanelConfiguration.txtLargeur.getText());
-	private int grillehauteur		   = Integer.parseInt(PanelConfiguration.txtHauteur.getText());
-	// private int nombreJoueurs		   = Integer.parseInt(PanelConfiguration.txtJoueurs.getText());
-	// private int nombreMetros			= Integer.parseInt(PanelConfiguration.txtMetro.getText());
-	private int nombreArrondissments	= Integer.parseInt(PanelConfiguration.txtArrondissments.getText());
-	private int tailleCases			 = Integer.parseInt(PanelConfiguration.txtTailleCases.getText());
+	private int grillelargeur			= Integer.parseInt(PanelConfiguration.txtLargeur		.getText());
+	private int grillehauteur			= Integer.parseInt(PanelConfiguration.txtHauteur		.getText());
+	private int nombreArrondissments	= Integer.parseInt(PanelConfiguration.txtArrondissments	.getText());
+	private int tailleCases				= Integer.parseInt(PanelConfiguration.txtTailleCases	.getText());
 
-	private JButton[] btnArrondissments = new JButton[ nombreArrondissments ];
+	private JButton[] 	btnArrondissments = new JButton[ nombreArrondissments ];
 
-	private JButton btnValider;
-	private JButton btnRetourConfiguration;
-	private JButton btnPasserAuJeu;
+	private JButton 	btnValider;
+	private JButton 	btnRetourConfiguration;
+	private JButton 	btnPasserAuJeu;
 
-	private int arrondissementSelectionne = 0;
+	private int 		arrondissementSelectionne = 0;
 
-	private Color couleurSelectionnee = Color.LIGHT_GRAY;
+	private Color 		couleurSelectionnee = Color.LIGHT_GRAY;
 
-	private String[] tabNomsArrondissments =
-	{
-		"1er","2ème","3ème","4ème","5ème",
-		"6ème","7ème","8ème","9ème","10ème",
-		"11ème","12ème","13ème","14ème","15ème",
-		"16ème","17ème","18ème","19ème","20ème"
-	};
+	private String[] 	tabNomsArrondissments = {"1er","2ème","3ème","4ème","5ème","6ème","7ème","8ème","9ème","10ème","11ème","12ème","13ème","14ème","15ème","16ème","17ème","18ème","19ème","20ème"};
 
 	private Color[] tabCouleurs = 
 	{
@@ -75,16 +67,16 @@ public class PanelCreation extends JPanel implements MouseListener, MouseMotionL
 
 	public PanelCreation(FrameCreation frmCreation, Controleur ctrl)
 	{
-		this.frmCreation = frmCreation;
-    	this.ctrl = ctrl;
+		this.frmCreation 			= frmCreation;
+    	this.ctrl 					= ctrl;
     	
 		this.setLayout(new BorderLayout());
 
-		this.panelPlateau = new JPanel(new GridLayout(this.grillehauteur, this.grillelargeur, 0, 0));
+		this.panelPlateau 			= new JPanel(new GridLayout(this.grillehauteur, this.grillelargeur, 0, 0));
 
-		this.panelArrondissments = new JPanel(new GridLayout(this.nombreArrondissments, 1, 5, 5));
+		this.panelArrondissments 	= new JPanel(new GridLayout(this.nombreArrondissments, 1, 5, 5));
 
-		this.panelBoutons = new JPanel(new GridLayout(1, 3, 5, 5));
+		this.panelBoutons 			= new JPanel(new GridLayout(1, 3, 5, 5));
 
 		/*-------------------------*/
 		/* Création des composants */
@@ -104,17 +96,17 @@ public class PanelCreation extends JPanel implements MouseListener, MouseMotionL
 			btnArrondissments[i].setBackground( this.tabCouleurs[i] );
 		}
 
-		this.btnValider = new JButton("Valider");
+		this.btnValider 			= new JButton("Valider");
 		this.btnRetourConfiguration = new JButton("Retour à la configuration");
-		this.btnPasserAuJeu = new JButton("Passer au jeu (Importer)");
+		this.btnPasserAuJeu 		= new JButton("Importation Uniquement");
 
 		/*-------------------------------*/
 		/* Positionnement des composants */
 		/*-------------------------------*/
 
-		this.add(this.panelPlateau, BorderLayout.CENTER);
+		this.add(this.panelPlateau, 		BorderLayout.CENTER);
 
-		this.add(this.panelArrondissments, BorderLayout.WEST);
+		this.add(this.panelArrondissments, 	BorderLayout.WEST);
 
 		for (int i = 0; i < this.grillelargeur * this.grillehauteur; i++)
 		{
@@ -126,18 +118,18 @@ public class PanelCreation extends JPanel implements MouseListener, MouseMotionL
 			this.panelArrondissments.add(btnArrondissments[i]);
 		}
 
-		this.add(this.panelBoutons, BorderLayout.SOUTH);
-		this.panelBoutons.add(this.btnValider);
-		this.panelBoutons.add(this.btnRetourConfiguration);
-		this.panelBoutons.add(this.btnPasserAuJeu);
+		this				.add(this.panelBoutons, BorderLayout.SOUTH);
+		this.panelBoutons	.add(this.btnValider);
+		this.panelBoutons	.add(this.btnRetourConfiguration);
+		this.panelBoutons	.add(this.btnPasserAuJeu);
 
 
 		/*---------------------------*/
 		/* Activation des composants */
 		/*---------------------------*/
 
-		this.panelPlateau.addMouseListener(this);
-		this.panelPlateau.addMouseMotionListener(this);
+		this.panelPlateau	.addMouseListener(this);
+		this.panelPlateau	.addMouseMotionListener(this);
 
 		for (int i = 0; i < this.nombreArrondissments; i++)
 		{
@@ -177,11 +169,11 @@ public class PanelCreation extends JPanel implements MouseListener, MouseMotionL
 		colorierCaseSousSouris(e);
 	}
 
-	public void mouseMoved(MouseEvent e) {}
-	public void mouseClicked(MouseEvent e) {}
+	public void mouseMoved(MouseEvent e) 	{}
+	public void mouseClicked(MouseEvent e) 	{}
 	public void mouseReleased(MouseEvent e) {}
-	public void mouseEntered(MouseEvent e) {}
-	public void mouseExited(MouseEvent e) {}
+	public void mouseEntered(MouseEvent e) 	{}
+	public void mouseExited(MouseEvent e) 	{}
 
 	public void actionPerformed(ActionEvent e)
 	{
@@ -202,11 +194,7 @@ public class PanelCreation extends JPanel implements MouseListener, MouseMotionL
 			{
 				if (this.tabCases[i].getBackground().equals(Color.LIGHT_GRAY))
 				{
-					JOptionPane.showMessageDialog(this,
-						"Veuillez remplir toutes les cases du plateau avant de valider.",
-						"Cases non remplies",
-						JOptionPane.WARNING_MESSAGE);
-					return;
+					System.out.println("Veuillez remplir toutes les cases du plateau avant de valider.");
 				}
 			}
 

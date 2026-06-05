@@ -59,15 +59,12 @@ public class PanelAccueil extends JPanel implements ActionListener
         if (e.getSource() == this.btnConfiguration)
         {
             this.frmConfiguration = new FrameConfiguration(this.ctrl);
-            this.frmAccueil.setVisible(false);
-            this.frmConfiguration.setVisible(true);
+            this.frmAccueil         .setVisible(false);
+            this.frmConfiguration   .setVisible(true);
         }
         else if (e.getSource() == this.btnRegles)
         {
-            JOptionPane.showMessageDialog(this,
-                "Les règles du jeu seront affichées ici.",
-                "Règles",
-                JOptionPane.INFORMATION_MESSAGE);
+            System.out.println("Affichage des règles du jeu...");
         }
     }
 
