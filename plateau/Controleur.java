@@ -15,17 +15,17 @@ public class Controleur
 	}
 
 	private int nbJoueurs;
-	private int nbMetro;
+	private int nbStations;
 
 	public void initialiserPlateau(int largeur, int hauteur)
 	{
 		this.metier = new Plateau(largeur, hauteur);
 	}
 
-	public void setConfigJeu(int nbJoueurs, int nbMetro)
+	public void setConfigJeu(int nbJoueurs, int nbStations)
 	{
 		this.nbJoueurs = nbJoueurs;
-		this.nbMetro = nbMetro;
+		this.nbStations = nbStations;
 	}
 
 	public int getNbJoueurs()
@@ -33,9 +33,9 @@ public class Controleur
 		return this.nbJoueurs;
 	}
 
-	public int getNbMetro()
+	public int getNbStations()
 	{
-		return this.nbMetro;
+		return this.nbStations;
 	}
 
 	public boolean chargerPlateau(java.io.File file)
@@ -58,14 +58,14 @@ public class Controleur
 		return this.metier.getArrondissement(numCase);
 	}
 
-	public void affecterMetro(int numCase, int metro)
+	public void affecterStation(int numCase, int station)
 	{
-		this.metier.affecterMetro(numCase, metro);
+		this.metier.affecterStation(numCase, station);
 	}
 
-	public int getMetro(int numCase)
+	public int getStation(int numCase)
 	{
-		return this.metier.getMetro(numCase);
+		return this.metier.getStation(numCase);
 	}
 
 	public void affecterDepart(int numCase, int depart)
@@ -76,6 +76,16 @@ public class Controleur
 	public int getDepart(int numCase)
 	{
 		return this.metier.getDepart(numCase);
+	}
+
+	public boolean aArete(int i, int j)
+	{
+		return this.metier.aArete(i, j);
+	}
+
+	public void genererAretesAuto()
+	{
+		this.metier.genererAretesAuto();
 	}
 
 	public boolean enregistrerPlateau(String nomFichier)

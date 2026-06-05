@@ -18,14 +18,14 @@ public class PanelConfiguration extends JPanel implements ActionListener
 	private JLabel 				lblLargeur;
 	private JLabel 				lblHauteur;
 	private JLabel 				lblJoueurs;
-	private JLabel 				lblMetro;
+	private JLabel 				lblStation;
 	private JLabel 				lblArrondissments;
 	private JLabel 				lblTailleCases;
 
 	public static JTextField 	txtLargeur;
 	public static JTextField 	txtHauteur;
 	public static JTextField 	txtJoueurs;
-	public static JTextField 	txtMetro;
+	public static JTextField 	txtStation;
 	public static JTextField 	txtArrondissments;
 	public static JTextField 	txtTailleCases;
 
@@ -72,10 +72,10 @@ public class PanelConfiguration extends JPanel implements ActionListener
 		this.lblJoueurs	.setFont(labelFont);
 		txtJoueurs 		= new JTextField();
 
-		this.lblMetro 	= new JLabel("Nombre de types de métro (max 6) :");
-		this.lblMetro	.setForeground(Color.WHITE);
-		this.lblMetro	.setFont(labelFont);
-		txtMetro 		= new JTextField();
+		this.lblStation = new JLabel("Nombre de types de station (max 6) :");
+		this.lblStation	.setForeground(Color.WHITE);
+		this.lblStation	.setFont(labelFont);
+		txtStation 		= new JTextField();
 
 		this.lblArrondissments 	= new JLabel("Nombre d'arrondissements (max 20) :");
 		this.lblArrondissments	.setForeground(Color.WHITE);
@@ -99,8 +99,8 @@ public class PanelConfiguration extends JPanel implements ActionListener
 		this.panelConfiguration.add(this.lblJoueurs);
 		this.panelConfiguration.add(txtJoueurs);
 
-		this.panelConfiguration.add(this.lblMetro);
-		this.panelConfiguration.add(txtMetro);
+		this.panelConfiguration.add(this.lblStation);
+		this.panelConfiguration.add(txtStation);
 
 		this.panelConfiguration.add(this.lblArrondissments);
 		this.panelConfiguration.add(txtArrondissments);
@@ -114,7 +114,7 @@ public class PanelConfiguration extends JPanel implements ActionListener
 		this.txtLargeur.setText("7");
 		this.txtHauteur.setText("7");
 		this.txtJoueurs.setText("4");					// Pour faciliter les tests
-		this.txtMetro.setText("4");
+		this.txtStation.setText("4");
 		this.txtArrondissments.setText("10");
 		this.txtTailleCases.setText("80");
 
@@ -149,7 +149,7 @@ public class PanelConfiguration extends JPanel implements ActionListener
 			if (txtLargeur			.getText().isEmpty()
 				|| txtHauteur		.getText().isEmpty()
 				|| txtJoueurs		.getText().isEmpty()
-				|| txtMetro			.getText().isEmpty()
+				|| txtStation		.getText().isEmpty()
 				|| txtArrondissments.getText().isEmpty()
 				|| txtTailleCases	.getText().isEmpty())
 			{
@@ -162,13 +162,13 @@ public class PanelConfiguration extends JPanel implements ActionListener
 				int largeur 			= Integer.parseInt(txtLargeur		.getText());
 				int hauteur 			= Integer.parseInt(txtHauteur		.getText());
 				int nbJoueurs 			= Integer.parseInt(txtJoueurs		.getText());
-				int nbMetro 			= Integer.parseInt(txtMetro			.getText());
+				int nbStations 			= Integer.parseInt(txtStation		.getText());
 				int nbArrondissements 	= Integer.parseInt(txtArrondissments.getText());
 				int tailleCases 		= Integer.parseInt(txtTailleCases	.getText());
 
-				if (nbMetro > 6)
+				if (nbStations > 6)
 				{
-					System.out.println("Le nombre de types de métro ne peut pas dépasser 6.");
+					System.out.println("Le nombre de types de station ne peut pas dépasser 6.");
 				}
 
 				if (nbJoueurs > 4)
@@ -181,7 +181,7 @@ public class PanelConfiguration extends JPanel implements ActionListener
 					System.out.println("Le nombre d'arrondissements ne peut pas dépasser 20.");
 				}
 
-				if (largeur <= 0 || hauteur <= 0 || nbJoueurs <= 0 || nbMetro <= 0 || nbArrondissements <= 0)
+				if (largeur <= 0 || hauteur <= 0 || nbJoueurs <= 0 || nbStations <= 0 || nbArrondissements <= 0)
 				{
 					System.out.println("Veuillez entrer des valeurs positives.");
 				}
@@ -197,7 +197,7 @@ public class PanelConfiguration extends JPanel implements ActionListener
 				}
 
 				this.ctrl				.initialiserPlateau(largeur, hauteur);
-				this.ctrl				.setConfigJeu(nbJoueurs, nbMetro);
+				this.ctrl				.setConfigJeu(nbJoueurs, nbStations);
 				this.frmCreation 		= new FrameCreation(this.ctrl);
 
 				this.frmConfiguration	.setVisible(false);
@@ -215,7 +215,7 @@ public class PanelConfiguration extends JPanel implements ActionListener
 			txtLargeur			.setText("");
 			txtHauteur			.setText("");
 			txtJoueurs			.setText("");
-			txtMetro			.setText("");
+			txtStation			.setText("");
 			txtArrondissments	.setText("");
 			txtTailleCases		.setText("");
 		}

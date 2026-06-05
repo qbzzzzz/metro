@@ -19,17 +19,25 @@ public class PanelJeu extends JPanel implements ActionListener
 	private JPanel panelApercuGrille;
 
 	private JLabel lblJoueurs;
-	private JLabel lblMetros;
-	private JLabel lblBases;
+	private JLabel lblStations;
 	private JLabel lblApercuTitre;
 
-	private JRadioButton rbMetro;
+	private JRadioButton rbStation;
 	private JRadioButton rbDepart;
-	private JComboBox<String> comboMetro;
+	private JComboBox<String> comboStation;
 	private JComboBox<String> comboDepart;
 	private JButton btnSauvegarder;
 
-	private Image[] metroImages = new Image[11]; // index 1 to 10
+	private Image[] stationImages = new Image[11]; // index 1 to 10
+
+	private String[] nomsStations = {
+		"Tour Eiffel",
+		"Moulin Rouge",
+		"Louvre",
+		"Restaurant",
+		"Gare",
+		"Aéroport"
+	};
 
 	private Color[] tabCouleurs = 
 	{
@@ -73,28 +81,22 @@ public class PanelJeu extends JPanel implements ActionListener
 		this.panelGauche.setPreferredSize(new Dimension(280, 520));
 
 		int nbJoueurs = this.ctrl.getNbJoueurs();
-		int nbMetro = this.ctrl.getNbMetro();
-		int nbBasesParJoueur = getNbBases(nbJoueurs);
+		int nbStations = this.ctrl.getNbStations();
 
 		this.lblJoueurs = new JLabel("Nombre de joueurs : " + nbJoueurs);
-		this.lblMetros  = new JLabel("Nombre de métros : " + nbMetro);
-		this.lblBases   = new JLabel("Bases par joueur : " + nbBasesParJoueur + " (Total : " + (nbBasesParJoueur * nbJoueurs) + ")");
+		this.lblStations  = new JLabel("Nombre de stations : " + nbStations);
 
 		// Style
 		Font fontLabel = new Font("Arial", Font.BOLD, 14);
 		this.lblJoueurs.setFont(fontLabel);
-		this.lblMetros.setFont(fontLabel);
-		this.lblBases.setFont(fontLabel);
+		this.lblStations.setFont(fontLabel);
 
 		this.lblJoueurs.setAlignmentX(Component.LEFT_ALIGNMENT);
-		this.lblMetros.setAlignmentX(Component.LEFT_ALIGNMENT);
-		this.lblBases.setAlignmentX(Component.LEFT_ALIGNMENT);
+		this.lblStations.setAlignmentX(Component.LEFT_ALIGNMENT);
 
 		this.panelGauche.add(this.lblJoueurs);
 		this.panelGauche.add(Box.createVerticalStrut(10));
-		this.panelGauche.add(this.lblMetros);
-		this.panelGauche.add(Box.createVerticalStrut(10));
-		this.panelGauche.add(this.lblBases);
+		this.panelGauche.add(this.lblStations);
 		this.panelGauche.add(Box.createVerticalStrut(20));
 
 		// Sélection et séparation du métro et de la base départ
@@ -104,44 +106,44 @@ public class PanelJeu extends JPanel implements ActionListener
 		this.panelGauche.add(lblPlacement);
 		this.panelGauche.add(Box.createVerticalStrut(10));
 
-		this.rbMetro = new JRadioButton("Placer un Métro :", true);
+		this.rbStation = new JRadioButton("Placer une Station :", true);
 		this.rbDepart = new JRadioButton("Placer un Départ :");
 		ButtonGroup group = new ButtonGroup();
-		group.add(this.rbMetro);
+		group.add(this.rbStation);
 		group.add(this.rbDepart);
 
-		this.rbMetro.setFont(new Font("Arial", Font.BOLD, 12));
-		this.rbMetro.setAlignmentX(Component.LEFT_ALIGNMENT);
+		this.rbStation.setFont(new Font("Arial", Font.BOLD, 12));
+		this.rbStation.setAlignmentX(Component.LEFT_ALIGNMENT);
 		this.rbDepart.setFont(new Font("Arial", Font.BOLD, 12));
 		this.rbDepart.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-		this.comboMetro = new JComboBox<>();
-		this.comboMetro.setMaximumSize(new Dimension(260, 30));
-		this.comboMetro.setAlignmentX(Component.LEFT_ALIGNMENT);
+		this.comboStation = new JComboBox<>();
+		this.comboStation.setMaximumSize(new Dimension(260, 30));
+		this.comboStation.setAlignmentX(Component.LEFT_ALIGNMENT);
 
 		this.comboDepart = new JComboBox<>();
 		this.comboDepart.setMaximumSize(new Dimension(260, 30));
 		this.comboDepart.setAlignmentX(Component.LEFT_ALIGNMENT);
 
 		// Synchronisation de l'activation des JComboBoxes
-		this.rbMetro.addActionListener(e -> {
-			this.comboMetro.setEnabled(true);
+		this.rbStation.addActionListener(e -> {
+			this.comboStation.setEnabled(true);
 			this.comboDepart.setEnabled(false);
 		});
 		this.rbDepart.addActionListener(e -> {
-			this.comboMetro.setEnabled(false);
+			this.comboStation.setEnabled(false);
 			this.comboDepart.setEnabled(true);
 		});
 
 		// État initial
-		this.comboMetro.setEnabled(true);
+		this.comboStation.setEnabled(true);
 		this.comboDepart.setEnabled(false);
 
 		mettreAJourComboPlacement();
 
-		this.panelGauche.add(this.rbMetro);
+		this.panelGauche.add(this.rbStation);
 		this.panelGauche.add(Box.createVerticalStrut(5));
-		this.panelGauche.add(this.comboMetro);
+		this.panelGauche.add(this.comboStation);
 		this.panelGauche.add(Box.createVerticalStrut(15));
 		this.panelGauche.add(this.rbDepart);
 		this.panelGauche.add(Box.createVerticalStrut(5));
@@ -166,7 +168,43 @@ public class PanelJeu extends JPanel implements ActionListener
 		this.lblApercuTitre.setFont(new Font("Arial", Font.ITALIC, 14));
 		this.panelDroite.add(this.lblApercuTitre, BorderLayout.NORTH);
 
-		this.panelApercuGrille = new JPanel();
+		this.panelApercuGrille = new JPanel()
+		{
+			@Override
+			public void paint(Graphics g)
+			{
+				super.paint(g); // Dessine le fond et les cases
+				
+				// Dessiner les arêtes par-dessus les cases
+				Graphics2D g2d = (Graphics2D) g;
+				g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+				g2d.setStroke(new BasicStroke(3));
+				g2d.setColor(new Color(160, 160, 160, 200)); // Gris semi-transparent
+
+				int size = ctrl.getLargeur() * ctrl.getHauteur();
+				if (getComponentCount() == size)
+				{
+					for (int i = 0; i < size; i++)
+					{
+						for (int j = i + 1; j < size; j++)
+						{
+							if (ctrl.aArete(i, j))
+							{
+								Component compI = getComponent(i);
+								Component compJ = getComponent(j);
+
+								int x1 = compI.getX() + compI.getWidth() / 2;
+								int y1 = compI.getY() + compI.getHeight() / 2;
+								int x2 = compJ.getX() + compJ.getWidth() / 2;
+								int y2 = compJ.getY() + compJ.getHeight() / 2;
+
+								g2d.drawLine(x1, y1, x2, y2);
+							}
+						}
+					}
+				}
+			}
+		};
 		this.panelApercuGrille.setBackground(Color.GRAY);
 		this.panelApercuGrille.setLayout(new GridBagLayout()); // Centrer le message d'attente
 		
@@ -182,14 +220,21 @@ public class PanelJeu extends JPanel implements ActionListener
 
 	private void mettreAJourComboPlacement()
 	{
-		if (this.comboMetro == null || this.comboDepart == null) return;
+		if (this.comboStation == null || this.comboDepart == null) return;
 
-		this.comboMetro.removeAllItems();
-		this.comboMetro.addItem("Aucun");
-		int nbMetro = this.ctrl.getNbMetro();
-		for (int i = 1; i <= nbMetro; i++)
+		this.comboStation.removeAllItems();
+		this.comboStation.addItem("Aucun");
+		int nbStations = this.ctrl.getNbStations();
+		for (int i = 1; i <= nbStations; i++)
 		{
-			this.comboMetro.addItem("Métro " + i);
+			if (i <= nomsStations.length)
+			{
+				this.comboStation.addItem(nomsStations[i - 1]);
+			}
+			else
+			{
+				this.comboStation.addItem("Station " + i);
+			}
 		}
 
 		this.comboDepart.removeAllItems();
@@ -215,10 +260,20 @@ public class PanelJeu extends JPanel implements ActionListener
 		{
 			importerSauvegarde();
 		}
+		else if (e.getActionCommand() != null && e.getActionCommand().equals("Créer un nouveau plateau"))
+		{
+			creerNouveauPlateau();
+		}
 		else if (e.getSource() == this.btnSauvegarder)
 		{
 			sauvegarderPlateau();
 		}
+	}
+
+	private void creerNouveauPlateau()
+	{
+		new FrameConfiguration(this.ctrl);
+		this.frame.dispose();
 	}
 
 	private void importerSauvegarde()
@@ -244,25 +299,23 @@ public class PanelJeu extends JPanel implements ActionListener
 		{
 			this.fichierCharge = file;
 
-			// Scanner pour mettre à jour automatiquement les infos de métros et de joueurs si le fichier contient des valeurs supérieures
-			int maxMetro = this.ctrl.getNbMetro();
+			// Scanner pour mettre à jour automatiquement les infos de stations et de joueurs si le fichier contient des valeurs supérieures
+			int maxStations = this.ctrl.getNbStations();
 			int maxJoueurs = this.ctrl.getNbJoueurs();
 			int size = this.ctrl.getLargeur() * this.ctrl.getHauteur();
 			for (int i = 0; i < size; i++)
 			{
-				maxMetro = Math.max(maxMetro, this.ctrl.getMetro(i));
+				maxStations = Math.max(maxStations, this.ctrl.getStation(i));
 				maxJoueurs = Math.max(maxJoueurs, this.ctrl.getDepart(i));
 			}
-			this.ctrl.setConfigJeu(maxJoueurs, maxMetro);
+			this.ctrl.setConfigJeu(maxJoueurs, maxStations);
 
 			// Mettre à jour l'affichage gauche
 			int nbJoueurs = this.ctrl.getNbJoueurs();
-			int nbMetro = this.ctrl.getNbMetro();
-			int nbBasesParJoueur = getNbBases(nbJoueurs);
+			int nbStations = this.ctrl.getNbStations();
 
 			this.lblJoueurs.setText("Nombre de joueurs : " + nbJoueurs);
-			this.lblMetros.setText("Nombre de métros : " + nbMetro);
-			this.lblBases.setText("Bases par joueur : " + nbBasesParJoueur + " (Total : " + (nbBasesParJoueur * nbJoueurs) + ")");
+			this.lblStations.setText("Nombre de stations : " + nbStations);
 
 			mettreAJourComboPlacement();
 			this.btnSauvegarder.setEnabled(true);
@@ -330,6 +383,7 @@ public class PanelJeu extends JPanel implements ActionListener
 					"Plateau sauvegardé avec succès et écrasé dans :\n" + this.fichierCharge.getAbsolutePath(),
 					"Sauvegarde Réussie",
 					JOptionPane.INFORMATION_MESSAGE);
+				this.frame.dispose();
 			}
 			else
 			{
@@ -343,19 +397,37 @@ public class PanelJeu extends JPanel implements ActionListener
 
 	private void cellClicked(int index)
 	{
-		if (this.rbMetro.isSelected())
+		if (this.rbStation.isSelected())
 		{
-			Object selectedItem = this.comboMetro.getSelectedItem();
+			Object selectedItem = this.comboStation.getSelectedItem();
 			if (selectedItem == null) return;
 			String selected = selectedItem.toString();
 			if (selected.equals("Aucun"))
 			{
-				this.ctrl.affecterMetro(index, 0);
+				this.ctrl.affecterStation(index, 0);
 			}
-			else if (selected.startsWith("Métro "))
+			else
 			{
-				int metroNum = Integer.parseInt(selected.substring(6));
-				this.ctrl.affecterMetro(index, metroNum);
+				int stationNum = 0;
+				for (int i = 0; i < nomsStations.length; i++)
+				{
+					if (selected.equals(nomsStations[i]))
+					{
+						stationNum = i + 1;
+						break;
+					}
+				}
+
+				if (stationNum == 0 && selected.startsWith("Station "))
+				{
+					try
+					{
+						stationNum = Integer.parseInt(selected.substring(8));
+					}
+					catch (Exception ex) {}
+				}
+
+				this.ctrl.affecterStation(index, stationNum);
 			}
 		}
 		else if (this.rbDepart.isSelected())
@@ -386,31 +458,33 @@ public class PanelJeu extends JPanel implements ActionListener
 			}
 		}
 
+		// Recalculer les arêtes après modification
+		this.ctrl.genererAretesAuto();
 		this.panelApercuGrille.repaint();
 	}
 
-	private Image getMetroImage(int metroNum)
+	private Image getStationImage(int stationNum)
 	{
-		if (metroNum < 1 || metroNum >= metroImages.length) return null;
-		if (metroImages[metroNum] == null)
+		if (stationNum < 1 || stationNum >= stationImages.length) return null;
+		if (stationImages[stationNum] == null)
 		{
-			String path = getMetroImagePath(metroNum);
+			String path = getStationImagePath(stationNum);
 			if (path != null)
 			{
 				ImageIcon icon = new ImageIcon(path);
-				metroImages[metroNum] = icon.getImage();
+				stationImages[stationNum] = icon.getImage();
 			}
 		}
-		return metroImages[metroNum];
+		return stationImages[stationNum];
 	}
 
-	private String getMetroImagePath(int metroNum)
+	private String getStationImagePath(int stationNum)
 	{
 		String[] paths = {
-			"plateau/images/" + metroNum + ".png",
-			"images/" + metroNum + ".png",
-			"../plateau/images/" + metroNum + ".png",
-			"../../plateau/images/" + metroNum + ".png"
+			"plateau/images/" + stationNum + ".png",
+			"images/" + stationNum + ".png",
+			"../plateau/images/" + stationNum + ".png",
+			"../../plateau/images/" + stationNum + ".png"
 		};
 		for (String path : paths)
 		{
@@ -420,7 +494,7 @@ public class PanelJeu extends JPanel implements ActionListener
 				return file.getAbsolutePath();
 			}
 		}
-		return "plateau/images/" + metroNum + ".png";
+		return "plateau/images/" + stationNum + ".png";
 	}
 
 	/*------------------------*/
@@ -467,11 +541,11 @@ public class PanelJeu extends JPanel implements ActionListener
 			}
 			g.fillRect(0, 0, w, h);
 
-			// 2. Dessiner l'image du Métro
-			int metro = ctrl.getMetro(index);
-			if (metro > 0)
+			// 2. Dessiner l'image de la Station
+			int station = ctrl.getStation(index);
+			if (station > 0)
 			{
-				Image img = getMetroImage(metro);
+				Image img = getStationImage(station);
 				if (img != null)
 				{
 					g.drawImage(img, 2, 2, w - 4, h - 4, this);

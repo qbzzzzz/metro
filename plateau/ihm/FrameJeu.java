@@ -18,10 +18,13 @@ public class FrameJeu extends JFrame
 		JMenuBar menuBar		= new JMenuBar();
 		JMenu menuSauvegarde 	= new JMenu("Fichier");
 		JMenuItem itemImporter 	= new JMenuItem("Importer une sauvegarde");
+		JMenuItem itemCreer 	= new JMenuItem("Créer un nouveau plateau");
 		
 		itemImporter	.addActionListener(panelJeu);
+		itemCreer		.addActionListener(panelJeu);
 		
 		menuSauvegarde	.add(itemImporter);
+		menuSauvegarde	.add(itemCreer);
 		menuBar			.add(menuSauvegarde);
 		this.setJMenuBar(menuBar);
 
