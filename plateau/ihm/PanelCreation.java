@@ -1,10 +1,14 @@
 package plateau.ihm;
 
-import plateau.Controleur;
-
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.*;
 import javax.swing.*;
+import plateau.Controleur;
 
 public class PanelCreation extends JPanel implements MouseListener, MouseMotionListener, ActionListener
 {

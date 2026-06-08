@@ -1,11 +1,24 @@
 package plateau.ihm;
 
-import java.awt.*;
 import java.io.File;
 import javax.swing.*;
 import plateau.Controleur;
 import plateau.metier.GestionnairePlacement;
 import plateau.metier.UtilitaireJeu;
+
+import java.awt.BasicStroke;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.RenderingHints;
+
 import java.awt.event.*;
 
 // Panneau principal de l'écran de jeu, divisé entre les options de placement et le rendu de la carte
@@ -307,8 +320,10 @@ public class PanelJeu extends JPanel
             this.btnSauvegarder.setEnabled(true);
 
             this.panelApercuGrille.removeAll();
+
             int largeur = this.ctrl.getLargeur();
             int hauteur = this.ctrl.getHauteur();
+			
             this.panelApercuGrille.setLayout(new GridLayout(hauteur, largeur, 2, 2));
             this.panelApercuGrille.setBackground(Color.DARK_GRAY);
 
