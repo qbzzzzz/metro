@@ -1,12 +1,11 @@
 package plateau.ihm;
 
-import plateau.Controleur;
-import plateau.metier.UtilitaireJeu;
-import plateau.metier.GestionnairePlacement;
-
 import java.awt.*;
-import javax.swing.*;
 import java.io.File;
+import javax.swing.*;
+import plateau.Controleur;
+import plateau.metier.GestionnairePlacement;
+import plateau.metier.UtilitaireJeu;
 
 public class PanelJeu extends JPanel
 {
@@ -34,13 +33,13 @@ public class PanelJeu extends JPanel
 	private JButton btnCreerNouveau;
 
 	private Image[] stationImages = new Image[11];
-	private EcouteurJeu ecouteur;
+	private ListenerJeu ecouteur;
 
 	public PanelJeu(FrameJeu frame, Controleur ctrl)
 	{
 		this.frame = frame;
 		this.ctrl = ctrl;
-		this.ecouteur = new EcouteurJeu(this);
+		this.ecouteur = new ListenerJeu(this);
 
 		this.setPreferredSize(new Dimension(900, 640));
 		this.setLayout(new BorderLayout(20, 20));
