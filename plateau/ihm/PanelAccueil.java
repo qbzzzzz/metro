@@ -3,7 +3,6 @@ package plateau.ihm;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-
 import plateau.Controleur;
 
 // Panneau de l'écran d'accueil contenant les boutons principaux et une image de fond
@@ -84,10 +83,9 @@ public class PanelAccueil extends JPanel implements ActionListener
                     }
                 }
 
-                // Si le fichier existe et que le système le permet, ouverture du PDF
-                if (fichierPdf != null && java.awt.Desktop.isDesktopSupported())
+                if (fichierPdf != null && Desktop.isDesktopSupported())
                 {
-                    java.awt.Desktop.getDesktop().open(fichierPdf);
+                    Desktop.getDesktop().open(fichierPdf);
                 }
                 else
                 {
