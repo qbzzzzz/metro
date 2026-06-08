@@ -50,30 +50,39 @@ public class ChargeurPlateau
 				if (compteurCases < taille)
 				{
 					// 4. Une ligne de case doit avoir au moins un indice et une zone (2 éléments)
+
 					if (elements.length < 2) return null;
 
 					int index = Integer.parseInt(elements[0]);
 					
 					// 5. L'indice doit suivre un ordre strict de 0 à (taille - 1)
+
 					if (index != compteurCases) return null;
 
 					// --- SÉCURITÉS SUR LES VALEURS ---
 					
 					int arrondissement = Integer.parseInt(elements[1]);
+
 					if (arrondissement < 0 || arrondissement > 20) return null;
+
 					plateau.affecterArrondissement(index, arrondissement);
 					
+
 					if (elements.length >= 3)
 					{
 						int station = Integer.parseInt(elements[2]);
+
 						if (station < 0 || station > 10) return null;
+
 						plateau.affecterStation(index, station);
 					}
 					
 					if (elements.length >= 4)
 					{
 						int depart = Integer.parseInt(elements[3]);
+
 						if (depart < 0 || depart > 4) return null;
+
 						plateau.affecterDepart(index, depart);
 					}
 					
@@ -84,7 +93,7 @@ public class ChargeurPlateau
 					// 6. Une ligne d'arête doit absolument avoir une source et une destination
 					if (elements.length < 2) return null;
 					
-					int source = Integer.parseInt(elements[0]);
+					int source      = Integer.parseInt(elements[0]);
 					int destination = Integer.parseInt(elements[1]);
 					
 					// 7. Les points de l'arête doivent exister sur le plateau

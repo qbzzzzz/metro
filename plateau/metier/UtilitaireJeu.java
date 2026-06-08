@@ -46,7 +46,7 @@ public class UtilitaireJeu
 	{
 		String[] chemins = {
 			"plateau/images/" 		+ stationNum + ".png",
-			"images/" + stationNum 	+ ".png",
+			"images/"               + stationNum + ".png",
 			"../plateau/images/" 	+ stationNum + ".png",
 			"../../plateau/images/" + stationNum + ".png"
 		};

@@ -12,32 +12,32 @@ import plateau.Controleur;
 
 public class PanelCreation extends JPanel implements MouseListener, MouseMotionListener, ActionListener
 {
-	private FrameConfiguration 			frmConfiguration;
-	private FrameCreation 				frmCreation;
-	private Controleur 					ctrl;
+	private FrameConfiguration frmConfiguration;
+	private FrameCreation 	   frmCreation;
+	private Controleur 		   ctrl;
 
-	private JPanel 						panelPlateau;
-	private JPanel 						panelArrondissments;
-	private JPanel 						panelBoutons;
-	private JPanel[] tabCases 			= new JPanel[ Integer.parseInt(PanelConfiguration.txtLargeur.getText()) * Integer.parseInt(PanelConfiguration.txtHauteur.getText()) ];
+	private JPanel 		       panelPlateau;
+	private JPanel 		       panelArrondissments;
+	private JPanel 		       panelBoutons;
+	private JPanel[]           tabCases;
 
-	private int grillelargeur			= Integer.parseInt(PanelConfiguration.txtLargeur		.getText());
-	private int grillehauteur			= Integer.parseInt(PanelConfiguration.txtHauteur		.getText());
-	private int nombreArrondissments	= Integer.parseInt(PanelConfiguration.txtArrondissments	.getText());
-	private int tailleCases				= Integer.parseInt(PanelConfiguration.txtTailleCases	.getText());
+	private int                grillelargeur;
+	private int                grillehauteur;
+	private int                nombreArrondissments;
+	private int                tailleCases;
 
-	private JButton[] 					btnArrondissments = new JButton[ nombreArrondissments ];
+	private JButton[] 	       btnArrondissments = new JButton[ nombreArrondissments ];
 
-	private JButton 					btnValider;
-	private JButton 					btnRetourConfiguration;
-	private JButton 					btnPasserAuJeu;
-	private JTextField  				txtNomFichier;
+	private JButton 	       btnValider;
+	private JButton 	       btnRetourConfiguration;
+	private JButton 	       btnPasserAuJeu;
+	private JTextField         txtNomFichier;
 
-	private int 						arrondissementSelectionne = 0;
+	private int 		       arrondissementSelectionne = 0;
 
-	private Color 						couleurSelectionnee = Color.LIGHT_GRAY;
+	private Color 		       couleurSelectionnee = Color.LIGHT_GRAY;
 
-	private String[] 					tabNomsArrondissments = {"1er","2ème","3ème","4ème","5ème","6ème","7ème","8ème","9ème","10ème","11ème","12ème","13ème","14ème","15ème","16ème","17ème","18ème","19ème","20ème"};
+	private String[] 	       tabNomsArrondissments = {"1er","2ème","3ème","4ème","5ème","6ème","7ème","8ème","9ème","10ème","11ème","12ème","13ème","14ème","15ème","16ème","17ème","18ème","19ème","20ème"};
 
 	private Color[] tabCouleurs = 
 	{
@@ -70,9 +70,7 @@ public class PanelCreation extends JPanel implements MouseListener, MouseMotionL
 		
 		this.setLayout(new BorderLayout());
 
-		this.panelPlateau 			= new JPanel(new GridLayout(this.grillehauteur, this.grillelargeur, 0, 0));
-		this.panelArrondissments 	= new JPanel(new GridLayout(this.nombreArrondissments, 1, 5, 5));
-		this.panelBoutons 			= new JPanel(new GridLayout(2, 1, 5, 5));
+		this.initialiser();
 
 		/*-------------------------*/
 		/* Création des composants */
@@ -148,6 +146,20 @@ public class PanelCreation extends JPanel implements MouseListener, MouseMotionL
 		this.btnPasserAuJeu			.addActionListener(this);
 	}
 
+	private void initialiser()
+	{
+		this.panelPlateau 			= new JPanel(new GridLayout(this.grillehauteur, this.grillelargeur, 0, 0));
+		this.panelArrondissments 	= new JPanel(new GridLayout(this.nombreArrondissments, 1, 5, 5));
+		this.panelBoutons 			= new JPanel(new GridLayout(2, 1, 5, 5));
+
+		this.tabCases = new JPanel[ Integer.parseInt(PanelConfiguration.txtLargeur.getText()) * Integer.parseInt(PanelConfiguration.txtHauteur.getText()) ];
+
+		this.grillelargeur			= Integer.parseInt(PanelConfiguration.txtLargeur		.getText());
+		this.grillehauteur			= Integer.parseInt(PanelConfiguration.txtHauteur		.getText());
+
+		this.nombreArrondissments	= Integer.parseInt(PanelConfiguration.txtArrondissments	.getText());
+		this.tailleCases		 	= Integer.parseInt(PanelConfiguration.txtTailleCases	.getText());
+	}
 	private void colorierCaseSousSouris(MouseEvent e)
 	{
 		Component comp = this.panelPlateau.getComponentAt(e.getPoint());
@@ -176,11 +188,11 @@ public class PanelCreation extends JPanel implements MouseListener, MouseMotionL
 		colorierCaseSousSouris(e);
 	}
 
-	public void mouseMoved(MouseEvent e) 	{}
-	public void mouseClicked(MouseEvent e) 	{}
+	public void mouseMoved   (MouseEvent e) {}
+	public void mouseClicked (MouseEvent e) {}
 	public void mouseReleased(MouseEvent e) {}
-	public void mouseEntered(MouseEvent e) 	{}
-	public void mouseExited(MouseEvent e) 	{}
+	public void mouseEntered (MouseEvent e) {}
+	public void mouseExited  (MouseEvent e) {}
 
 	public void actionPerformed(ActionEvent e)
 	{

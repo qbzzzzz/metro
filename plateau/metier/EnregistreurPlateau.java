@@ -25,6 +25,7 @@ public class EnregistreurPlateau
 			}
 
 			// 3. On crée le fichier avec le bon nom
+			
 			File fichier = new File(dossier, nomComplet);
 			PrintWriter pw = new PrintWriter(new FileOutputStream(fichier));
 

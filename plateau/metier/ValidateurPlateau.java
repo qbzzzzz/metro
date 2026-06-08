@@ -18,7 +18,9 @@ public class ValidateurPlateau
 			}
 			if (compteur != 1)
 			{
-				System.out.println("Erreur : Le joueur " + p + " doit avoir exactement UNE base de départ sur le plateau. Actuellement : " + compteur + " placée(s).");
+				System.out.println("Erreur : Le joueur "                                                      + p 
+				                 + "doit avoir exactement UNE base de départ sur le plateau. Actuellement : " + compteur 
+								 + " placée(s).");
 				return false;
 			}
 		}

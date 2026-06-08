@@ -14,7 +14,7 @@ import plateau.Controleur;
 public class PanelAccueil extends JPanel implements ActionListener
 {
     // Attributs : Composants graphiques, références des fenêtres et image de fond
-
+    
     private JButton             btnConfiguration;
     private JButton             btnRegles;
 
@@ -31,14 +31,12 @@ public class PanelAccueil extends JPanel implements ActionListener
         this.ctrl       = ctrl;
 
         // Chargement de l'image de fond et définition de la taille (800x600)
-        
         this.imgFond = new ImageIcon( this.ctrl.getImageFond() ).getImage();
         this.setPreferredSize(new Dimension(800, 600));
 
         /*-------------------------*/
         /* Création des composants */
         /*-------------------------*/
-
         this.btnConfiguration = new JButton("Configuration du plateau");
         this.btnRegles        = new JButton("Règles");
 

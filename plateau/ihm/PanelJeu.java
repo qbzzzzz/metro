@@ -1,11 +1,5 @@
 package plateau.ihm;
 
-import java.io.File;
-import javax.swing.*;
-import plateau.Controleur;
-import plateau.metier.GestionnairePlacement;
-import plateau.metier.UtilitaireJeu;
-
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -18,8 +12,12 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.RenderingHints;
-
 import java.awt.event.*;
+import java.io.File;
+import javax.swing.*;
+import plateau.Controleur;
+import plateau.metier.GestionnairePlacement;
+import plateau.metier.UtilitaireJeu;
 
 // Panneau principal de l'écran de jeu, divisé entre les options de placement et le rendu de la carte
 public class PanelJeu extends JPanel
@@ -65,8 +63,10 @@ public class PanelJeu extends JPanel
         /*-------------------------*/
 
         // Conteneurs principaux (Gauche pour les outils, Droite pour l'affichage du plateau)
+
         this.panelGauche 	= new JPanel();
         this.panelGauche	.setLayout(new BoxLayout(this.panelGauche, BoxLayout.Y_AXIS));
+
         this.panelGauche	.setBorder(BorderFactory.createTitledBorder("Informations du Jeu"));
         this.panelGauche	.setPreferredSize(new Dimension(280, 580));
 
@@ -74,15 +74,20 @@ public class PanelJeu extends JPanel
         this.panelDroite	.setBorder(BorderFactory.createTitledBorder("Plateau Interactif"));
 
         // Labels d'informations textuelles
+
         this.lblJoueurs 	= new JLabel("Nombre de joueurs : "  + this.ctrl.getNbJoueurs());
         this.lblStations 	= new JLabel("Nombre de stations : " + this.ctrl.getNbStations());
+
         this.lblAretes   	= new JLabel("Nombre d'arêtes : 0");
         this.lblApercuTitre = new JLabel("Aucun plateau chargé", SwingConstants.CENTER);
 
+
         Font fontLabel 		= new Font("Arial", Font.BOLD, 14);
+
         this.lblJoueurs		.setFont(fontLabel);
         this.lblStations	.setFont(fontLabel);
         this.lblAretes		.setFont(fontLabel);
+
         this.lblApercuTitre	.setFont(new Font("Arial", Font.ITALIC, 14));
 
         this.lblJoueurs		.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -90,17 +95,22 @@ public class PanelJeu extends JPanel
         this.lblAretes		.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel lblFichier 	= new JLabel("Fichier du plateau :");
+
         lblFichier			.setFont(new Font("Arial", Font.BOLD, 12));
         lblFichier			.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel lblPlacement = new JLabel("Mode de placement :");
+
         lblPlacement		.setFont(new Font("Arial", Font.BOLD, 14));
         lblPlacement		.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // Composants de gestion des fichiers (Import / Création)
+
         this.comboFichiersImport = new JComboBox<>();
+
         this.comboFichiersImport.setMaximumSize(new Dimension(260, 30));
         this.comboFichiersImport.setAlignmentX(Component.LEFT_ALIGNMENT);
+
         mettreAJourComboFichiers();
 
         this.btnImporter 		= new JButton("Charger le plateau");
@@ -117,11 +127,13 @@ public class PanelJeu extends JPanel
         this.rbStation 			= new JRadioButton("Placer une Station :", true);
         this.rbDepart  			= new JRadioButton("Placer un Départ :");
         ButtonGroup group 		= new ButtonGroup();
+
         group.add(this.rbStation);
         group.add(this.rbDepart);
 
         this.rbStation			.setFont(new Font("Arial", Font.BOLD, 12));
         this.rbStation			.setAlignmentX(Component.LEFT_ALIGNMENT);
+
         this.rbDepart			.setFont(new Font("Arial", Font.BOLD, 12));
         this.rbDepart			.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -130,6 +142,7 @@ public class PanelJeu extends JPanel
         this.comboStation		.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         this.comboDepart 		= new JComboBox<>();
+        
         this.comboDepart		.setMaximumSize(new Dimension(260, 30));
         this.comboDepart		.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -150,7 +163,9 @@ public class PanelJeu extends JPanel
             {
                 super.paint(g);
                 Graphics2D arete = (Graphics2D) g;
+
                 arete.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
                 arete.setStroke(new BasicStroke(3));
                 arete.setColor(new Color(160, 160, 160, 200));
 
@@ -165,10 +180,12 @@ public class PanelJeu extends JPanel
                             {
                                 Component compI = getComponent(i);
                                 Component compJ = getComponent(j);
+
                                 int x1 = compI.getX() + compI.getWidth() 	/ 2;
                                 int y1 = compI.getY() + compI.getHeight() 	/ 2;
                                 int x2 = compJ.getX() + compJ.getWidth() 	/ 2;
                                 int y2 = compJ.getY() + compJ.getHeight() 	/ 2;
+
                                 arete.drawLine(x1, y1, x2, y2);
                             }
                         }
@@ -188,39 +205,16 @@ public class PanelJeu extends JPanel
         /*-------------------------------*/
 
         // Assemblage de la colonne d'outils de gauche (BoxLayout vertical)
-        this.panelGauche.add(this.lblJoueurs);
-        this.panelGauche.add(Box.createVerticalStrut(10));
-        this.panelGauche.add(this.lblStations);
-        this.panelGauche.add(Box.createVerticalStrut(10));
-        this.panelGauche.add(this.lblAretes);
-        this.panelGauche.add(Box.createVerticalStrut(20));
-        this.panelGauche.add(lblFichier);
-        this.panelGauche.add(Box.createVerticalStrut(5));
-        this.panelGauche.add(this.comboFichiersImport);
-        this.panelGauche.add(Box.createVerticalStrut(5));
-        this.panelGauche.add(this.btnImporter);
-        this.panelGauche.add(Box.createVerticalStrut(10));
-        this.panelGauche.add(this.btnCreerNouveau);
-        this.panelGauche.add(Box.createVerticalStrut(20));
-        this.panelGauche.add(sep);
-        this.panelGauche.add(Box.createVerticalStrut(15));
-        this.panelGauche.add(lblPlacement);
-        this.panelGauche.add(Box.createVerticalStrut(10));
-        this.panelGauche.add(this.rbStation);
-        this.panelGauche.add(Box.createVerticalStrut(5));
-        this.panelGauche.add(this.comboStation);
-        this.panelGauche.add(Box.createVerticalStrut(15));
-        this.panelGauche.add(this.rbDepart);
-        this.panelGauche.add(Box.createVerticalStrut(5));
-        this.panelGauche.add(this.comboDepart);
-        this.panelGauche.add(Box.createVerticalStrut(30));
-        this.panelGauche.add(this.btnSauvegarder);
+
+        this.AjoutPanelGauche();
 
         // Assemblage du bloc de droite (Plateau)
+
         this.panelDroite.add(this.lblApercuTitre, BorderLayout.NORTH);
         this.panelDroite.add(this.panelApercuGrille, BorderLayout.CENTER);
 
         // Injection globale dans le PanelJeu principal
+        
         this.add(this.panelGauche, BorderLayout.WEST);
         this.add(this.panelDroite, BorderLayout.CENTER);
 
@@ -230,19 +224,24 @@ public class PanelJeu extends JPanel
         /*---------------------------*/
 
         // Liens avec le Listener centralisé pour les boutons d'action
+
         this.btnImporter	.addActionListener(this.listener);
         this.btnCreerNouveau.addActionListener(this.listener);
         this.btnSauvegarder	.addActionListener(this.listener);
 
-        this.rbStation		.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        this.rbStation.addActionListener(new ActionListener() 
+        {
+            public void actionPerformed(ActionEvent e) 
+            {
                 comboStation.setEnabled(true);
                 comboDepart	.setEnabled(false);
             }
         });
 
-        this.rbDepart		.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        this.rbDepart.addActionListener(new ActionListener() 
+        {
+            public void actionPerformed(ActionEvent e) 
+            {
                 comboStation.setEnabled(false);
                 comboDepart	.setEnabled(true);
             }
@@ -254,12 +253,17 @@ public class PanelJeu extends JPanel
     public JButton 				getBtnImporter() 			{ return this.btnImporter; }
     public JButton 				getBtnCreerNouveau() 		{ return this.btnCreerNouveau; }
     public JButton 				getBtnSauvegarder() 		{ return this.btnSauvegarder; }
+
     public JComboBox<String> 	getComboFichiersImport() 	{ return this.comboFichiersImport; }
+
     public Controleur 			getCtrl() 					{ return this.ctrl; }
+
     public FrameJeu 			getFrame() 					{ return this.frame; }
+
     public File 				getFichierCharge() 			{ return this.fichierCharge; }
 
     // Lit le dossier "sauvegarde/" et liste tous les fichiers .txt valides dans le menu déroulant
+
     private void mettreAJourComboFichiers()
     {
         this.comboFichiersImport.removeAllItems();
@@ -280,6 +284,50 @@ public class PanelJeu extends JPanel
         }
     }
 
+    private void AjoutPanelGauche()
+    {
+        this.panelGauche.add(this.lblJoueurs);
+        this.panelGauche.add(Box.createVerticalStrut(10));
+
+        this.panelGauche.add(this.lblStations);
+        this.panelGauche.add(Box.createVerticalStrut(10));
+
+        this.panelGauche.add(this.lblAretes);
+        this.panelGauche.add(Box.createVerticalStrut(20));
+
+        this.panelGauche.add(lblFichier);
+        this.panelGauche.add(Box.createVerticalStrut(5));
+
+        this.panelGauche.add(this.comboFichiersImport);
+        this.panelGauche.add(Box.createVerticalStrut(5));
+
+        this.panelGauche.add(this.btnImporter);
+        this.panelGauche.add(Box.createVerticalStrut(10));
+
+        this.panelGauche.add(this.btnCreerNouveau);
+        this.panelGauche.add(Box.createVerticalStrut(20));
+
+        this.panelGauche.add(sep);
+        this.panelGauche.add(Box.createVerticalStrut(15));
+
+        this.panelGauche.add(lblPlacement);
+        this.panelGauche.add(Box.createVerticalStrut(10));
+
+        this.panelGauche.add(this.rbStation);
+        this.panelGauche.add(Box.createVerticalStrut(5));
+
+        this.panelGauche.add(this.comboStation);
+        this.panelGauche.add(Box.createVerticalStrut(15));
+
+        this.panelGauche.add(this.rbDepart);
+        this.panelGauche.add(Box.createVerticalStrut(5));
+
+        this.panelGauche.add(this.comboDepart);
+        this.panelGauche.add(Box.createVerticalStrut(30));
+
+        this.panelGauche.add(this.btnSauvegarder);
+    }
+    
     // Configure dynamiquement les choix disponibles dans les listes selon les configurations de la partie
     private void mettreAJourComboPlacement()
     {
@@ -287,8 +335,10 @@ public class PanelJeu extends JPanel
 
         this.comboStation.removeAllItems();
         this.comboStation.addItem("Aucun");
-        int nbStations = this.ctrl.getNbStations();
+
+        int      nbStations   = this.ctrl.getNbStations();
         String[] nomsStations = UtilitaireJeu.getNomsStations();
+
         for (int i = 1; i <= nbStations; i++)
         {
             if (i <= nomsStations.length) { this.comboStation.addItem(nomsStations[i - 1]); }
@@ -297,7 +347,9 @@ public class PanelJeu extends JPanel
 
         this.comboDepart.removeAllItems();
         this.comboDepart.addItem("Aucun");
+
         int nbJoueurs = this.ctrl.getNbJoueurs();
+
         for (int i = 1; i <= nbJoueurs; i++)
         {
             this.comboDepart.addItem("Joueur " + i);
@@ -342,9 +394,11 @@ public class PanelJeu extends JPanel
     }
 
     // Intercepte les clics effectués depuis les cases enfants (CasePanel) et applique le placement adéquat
+
     public void caseCliquee(int index)
     {
         String mode = "STATION";
+
         Object selection = this.comboStation.getSelectedItem();
         if (this.rbDepart.isSelected())
         {
@@ -355,7 +409,9 @@ public class PanelJeu extends JPanel
         GestionnairePlacement.gererClic(index, mode, selection, this.ctrl);
 
         this.ctrl.genererAretesAuto(); // Recalcul automatique des lignes de métro connectées
+
         this.lblAretes.setText("Nombre d'arêtes : " + this.ctrl.getNbAretes());
+
         this.panelApercuGrille.repaint();
     }
 

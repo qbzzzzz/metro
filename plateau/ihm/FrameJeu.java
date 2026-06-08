@@ -1,9 +1,8 @@
 package plateau.ihm;
 
-import plateau.Controleur;
-
 import java.awt.BorderLayout;
 import javax.swing.*;
+import plateau.Controleur;
 
 public class FrameJeu extends JFrame
 {
@@ -14,8 +13,8 @@ public class FrameJeu extends JFrame
 		PanelJeu panelJeu = new PanelJeu(this, ctrl);
 		this.add(panelJeu, BorderLayout.CENTER);
 
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.pack();
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null); // Centre la fenêtre
 		this.setVisible(true);
 	}

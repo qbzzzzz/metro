@@ -26,7 +26,7 @@ public class PanelConfiguration extends JPanel implements ActionListener
 
     // Champs de saisie (TextFields) statiques et publics (visibles depuis l'extérieur)
     public static JTextField    txtLargeur;
-    public static JTextField    txtHauteur;
+    public static JTextField    txtHauteur; 
     public static JTextField    txtJoueurs;
     public static JTextField    txtStation;
     public static JTextField    txtArrondissments;
@@ -170,7 +170,24 @@ public class PanelConfiguration extends JPanel implements ActionListener
         g.fillRect(0, 0, getWidth(), getHeight());
     }
 
-    // Traitement des actions au clic
+    private boolean estVide()
+    {
+        return  txtLargeur.getText().isEmpty()          || 
+                txtHauteur.getText().isEmpty()          || 
+                txtJoueurs.getText().isEmpty()          || 
+                txtStation.getText().isEmpty()          || 
+                txtArrondissments.getText().isEmpty()   || 
+                txtTailleCases.getText().isEmpty();
+    }
+    private void viderChamps()
+    {
+        txtLargeur          .setText("");
+        txtHauteur          .setText("");
+        txtJoueurs          .setText("");
+        txtStation          .setText("");
+        txtArrondissments   .setText("");
+        txtTailleCases      .setText("");
+    }
     // Traitement des actions au clic
     public void actionPerformed(ActionEvent e)
     {
@@ -178,12 +195,7 @@ public class PanelConfiguration extends JPanel implements ActionListener
         if (e.getSource() == this.btnValider)
         {
             // Vérification de présence des données
-            if (txtLargeur.getText().isEmpty()          || 
-                txtHauteur.getText().isEmpty()          || 
-                txtJoueurs.getText().isEmpty()          || 
-                txtStation.getText().isEmpty()          || 
-                txtArrondissments.getText().isEmpty()   || 
-                txtTailleCases.getText().isEmpty())
+            if (this.estVide())
             {
                 System.out.println("Veuillez remplir tous les champs.");
                 return; // Bloque l'exécution ici
@@ -201,33 +213,39 @@ public class PanelConfiguration extends JPanel implements ActionListener
                 int tailleCases         = Integer.parseInt(txtTailleCases   .getText());
 
                 // Batterie de tests de cohérence des données saisies (limites max et min)
-                if (nbStations > 6) { 
+                if (nbStations > 6) 
+                { 
                     System.out.println("Le nombre de types de station ne peut pas dépasser 6."); 
                     return; 
                 }
-                if (nbJoueurs > 4) { 
+                if (nbJoueurs > 4) 
+                { 
                     System.out.println("Le nombre de joueurs ne peut pas dépasser 4."); 
                     return; 
                 }
-                if (nbArrondissements > 20) { 
+                if (nbArrondissements > 20) 
+                { 
                     System.out.println("Le nombre d'arrondissements ne peut pas dépasser 20."); 
                     return; 
                 }
-                if (largeur <= 0 || hauteur <= 0 || nbJoueurs <= 0 || nbStations <= 0 || nbArrondissements <= 0) { 
+                if (largeur <= 0 || hauteur <= 0 || nbJoueurs <= 0 || nbStations <= 0 || nbArrondissements <= 0) 
+                { 
                     System.out.println("Veuillez entrer des valeurs positives."); 
                     return; 
                 }
-                if (largeur < nbJoueurs) { 
+                if (largeur < nbJoueurs) 
+                { 
                     System.out.println("La largeur doit être cohérente avec le nombre de joueurs."); 
                     return; 
                 }
-                if (hauteur < nbJoueurs) { 
+                if (hauteur < nbJoueurs) 
+                { 
                     System.out.println("La hauteur doit être cohérente avec le nombre de joueurs."); 
                     return; 
                 }
 
                 // Initialisation du modèle via le contrôleur (uniquement si aucun 'return' n'a été déclenché)
-                
+
                 this.ctrl.initialiserPlateau(largeur, hauteur);
                 this.ctrl.setConfigJeu(nbJoueurs, nbStations);
 
@@ -245,12 +263,7 @@ public class PanelConfiguration extends JPanel implements ActionListener
         // Action 2 : Annulation (Vide instantanément tous les champs de texte)
         if (e.getSource() == this.btnAnnuler)
         {
-            txtLargeur          .setText("");
-            txtHauteur          .setText("");
-            txtJoueurs          .setText("");
-            txtStation          .setText("");
-            txtArrondissments   .setText("");
-            txtTailleCases      .setText("");
+            this.viderChamps();
         }
     }
 }
