@@ -5,10 +5,6 @@ import plateau.Controleur;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import java.util.ArrayList;
-
-import java.io.PrintWriter;
-import java.io.FileOutputStream;
 
 public class PanelCreation extends JPanel implements MouseListener, MouseMotionListener, ActionListener
 {
@@ -31,6 +27,7 @@ public class PanelCreation extends JPanel implements MouseListener, MouseMotionL
 	private JButton 	btnValider;
 	private JButton 	btnRetourConfiguration;
 	private JButton 	btnPasserAuJeu;
+	private JTextField  txtNomFichier;
 
 	private int 		arrondissementSelectionne = 0;
 
@@ -40,7 +37,6 @@ public class PanelCreation extends JPanel implements MouseListener, MouseMotionL
 
 	private Color[] tabCouleurs = 
 	{
-
 		new Color(255, 105, 180), // rose vif
 		new Color(138, 43, 226),  // violet
 		new Color(255, 165, 0),   // orange
@@ -61,22 +57,18 @@ public class PanelCreation extends JPanel implements MouseListener, MouseMotionL
 		new Color(245, 222, 179), // beige
 		new Color(255, 228, 225), // rose très pâle
 		new Color(255, 192, 203)  // rose clair
-				
 	};
-
 
 	public PanelCreation(FrameCreation frmCreation, Controleur ctrl)
 	{
-		this.frmCreation 			= frmCreation;
-    	this.ctrl 					= ctrl;
-    	
+		this.frmCreation 	= frmCreation;
+		this.ctrl 			= ctrl;
+		
 		this.setLayout(new BorderLayout());
 
 		this.panelPlateau 			= new JPanel(new GridLayout(this.grillehauteur, this.grillelargeur, 0, 0));
-
 		this.panelArrondissments 	= new JPanel(new GridLayout(this.nombreArrondissments, 1, 5, 5));
-
-		this.panelBoutons 			= new JPanel(new GridLayout(1, 3, 5, 5));
+		this.panelBoutons 			= new JPanel(new GridLayout(2, 1, 5, 5));
 
 		/*-------------------------*/
 		/* Création des composants */
@@ -100,12 +92,27 @@ public class PanelCreation extends JPanel implements MouseListener, MouseMotionL
 		this.btnRetourConfiguration = new JButton("Retour à la configuration");
 		this.btnPasserAuJeu 		= new JButton("Importation Uniquement");
 
+		// Label et Champ de texte pour le nom du fichier
+		JPanel panelNom = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		JLabel lblNom = new JLabel("Nom de la sauvegarde :");
+		this.txtNomFichier = new JTextField(15);
+		this.txtNomFichier.setText("mon_plateau");
+		panelNom.add(lblNom);
+		panelNom.add(this.txtNomFichier);
+
+		JPanel panelBtns = new JPanel(new GridLayout(1, 3, 5, 5));
+		panelBtns.add(this.btnValider);
+		panelBtns.add(this.btnRetourConfiguration);
+		panelBtns.add(this.btnPasserAuJeu);
+
+		this.panelBoutons.add(panelNom);
+		this.panelBoutons.add(panelBtns);
+
 		/*-------------------------------*/
 		/* Positionnement des composants */
 		/*-------------------------------*/
 
 		this.add(this.panelPlateau, 		BorderLayout.CENTER);
-
 		this.add(this.panelArrondissments, 	BorderLayout.WEST);
 
 		for (int i = 0; i < this.grillelargeur * this.grillehauteur; i++)
@@ -118,11 +125,7 @@ public class PanelCreation extends JPanel implements MouseListener, MouseMotionL
 			this.panelArrondissments.add(btnArrondissments[i]);
 		}
 
-		this				.add(this.panelBoutons, BorderLayout.SOUTH);
-		this.panelBoutons	.add(this.btnValider);
-		this.panelBoutons	.add(this.btnRetourConfiguration);
-		this.panelBoutons	.add(this.btnPasserAuJeu);
-
+		this.add(this.panelBoutons, BorderLayout.SOUTH);
 
 		/*---------------------------*/
 		/* Activation des composants */
@@ -169,11 +172,11 @@ public class PanelCreation extends JPanel implements MouseListener, MouseMotionL
 		colorierCaseSousSouris(e);
 	}
 
-	public void mouseMoved(MouseEvent e) 	{}
-	public void mouseClicked(MouseEvent e) 	{}
+	public void mouseMoved(MouseEvent e) {}
+	public void mouseClicked(MouseEvent e) {}
 	public void mouseReleased(MouseEvent e) {}
-	public void mouseEntered(MouseEvent e) 	{}
-	public void mouseExited(MouseEvent e) 	{}
+	public void mouseEntered(MouseEvent e) {}
+	public void mouseExited(MouseEvent e) {}
 
 	public void actionPerformed(ActionEvent e)
 	{
@@ -182,9 +185,7 @@ public class PanelCreation extends JPanel implements MouseListener, MouseMotionL
 			if (e.getSource() == btnArrondissments[i])
 			{
 				couleurSelectionnee = btnArrondissments[i].getBackground();
-
 				this.arrondissementSelectionne = i + 1;
-
 			}
 		}
 
@@ -195,36 +196,20 @@ public class PanelCreation extends JPanel implements MouseListener, MouseMotionL
 				if (this.tabCases[i].getBackground().equals(Color.LIGHT_GRAY))
 				{
 					System.out.println("Veuillez remplir toutes les cases du plateau avant de valider.");
+					return;
 				}
 			}
 
-			// Demande le nom du plateau à l'utilisateur
-			String nomPlateau = null;
-			while (nomPlateau == null || nomPlateau.trim().isEmpty())
+			String nomPlateau = this.txtNomFichier.getText();
+			if (nomPlateau == null || nomPlateau.trim().isEmpty())
 			{
-				nomPlateau = JOptionPane.showInputDialog(this,
-					"Donnez un nom à votre plateau :",
-					"Nommer le plateau",
-					JOptionPane.PLAIN_MESSAGE);
-
-				// L'utilisateur a annulé
-				if (nomPlateau == null) return;
-
-				if (nomPlateau.trim().isEmpty())
-				{
-					JOptionPane.showMessageDialog(this,
-						"Le nom ne peut pas être vide.",
-						"Nom invalide",
-						JOptionPane.ERROR_MESSAGE);
-				}
+				System.out.println("Le nom de fichier ne peut pas être vide.");
+				return;
 			}
 
 			if (this.ctrl.enregistrerPlateau(nomPlateau.trim()))
 			{
-				JOptionPane.showMessageDialog(this,
-					"Plateau \"" + nomPlateau.trim() + "\" sauvegardé avec succès dans le dossier sauvegarde/ !",
-					"Plateau validé",
-					JOptionPane.INFORMATION_MESSAGE);
+				System.out.println("Plateau \"" + nomPlateau.trim() + "\" sauvegardé avec succès dans le dossier sauvegarde/ !");
 				new FrameJeu(this.ctrl);
 				this.frmCreation.dispose();
 			}
@@ -233,13 +218,12 @@ public class PanelCreation extends JPanel implements MouseListener, MouseMotionL
 		if (e.getSource() == this.btnRetourConfiguration)
 		{
 			if (this.frmConfiguration == null)
-    		{
-    			this.frmConfiguration = new FrameConfiguration(this.ctrl);
-    		}
+			{
+				this.frmConfiguration = new FrameConfiguration(this.ctrl);
+			}
 
-    		this.frmConfiguration.setVisible(true);
-    		this.frmCreation.setVisible(false);
-
+			this.frmConfiguration.setVisible(true);
+			this.frmCreation.setVisible(false);
 		}
 
 		if (e.getSource() == this.btnPasserAuJeu)

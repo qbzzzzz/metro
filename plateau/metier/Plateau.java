@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class Plateau
 {
-	private int[] tabCases;
+	private int[] tabArrondissements;
 	private int[] tabStations;
 	private int[] tabDeparts;
 	private int   largeur;
@@ -18,10 +18,11 @@ public class Plateau
 	{
 		this.largeur  = largeur;
 		this.hauteur  = hauteur;
-		this.tabCases = new int[largeur * hauteur];
-		this.tabStations = new int[largeur * hauteur];
-		this.tabDeparts = new int[largeur * hauteur];
-		this.matriceAretes = new boolean[largeur * hauteur][largeur * hauteur];
+		int size = largeur * hauteur;
+		this.tabArrondissements = new int[size];
+		this.tabStations = new int[size];
+		this.tabDeparts = new int[size];
+		this.matriceAretes = new boolean[size][size];
 	}
 
 	public int getLargeur() { return this.largeur; }
@@ -29,15 +30,15 @@ public class Plateau
 
 	public int getArrondissement(int numCase)
 	{
-		if (numCase >= 0 && numCase < this.tabCases.length)
-			return this.tabCases[numCase];
+		if (numCase >= 0 && numCase < this.tabArrondissements.length)
+			return this.tabArrondissements[numCase];
 		return 0;
 	}
 
 	public void affecterArrondissement(int numCase, int arrondissement)
 	{
-		if (numCase >= 0 && numCase < this.tabCases.length)
-			this.tabCases[numCase] = arrondissement;
+		if (numCase >= 0 && numCase < this.tabArrondissements.length)
+			this.tabArrondissements[numCase] = arrondissement;
 	}
 
 	public void affecterStation(int numCase, int station)
@@ -81,9 +82,9 @@ public class Plateau
 		int size = this.largeur * this.hauteur;
 		this.matriceAretes = new boolean[size][size];
 
-		// Les 8 directions : N, NE, E, SE, S, SW, W, NW
-		int[] dx = { 0,  1, 1, 1, 0, -1, -1, -1};
-		int[] dy = {-1, -1, 0, 1, 1,  1,  0, -1};
+		// Les 4 directions vers le bas / la droite (Est, Sud-Est, Sud, Sud-Ouest)
+		int[] dx = {1, 1, 0, -1};
+		int[] dy = {0, 1, 1,  1};
 
 		for (int i = 0; i < size; i++)
 		{
@@ -92,7 +93,7 @@ public class Plateau
 			int x = i % this.largeur;
 			int y = i / this.largeur;
 
-			for (int d = 0; d < 8; d++)
+			for (int d = 0; d < 4; d++)
 			{
 				int cx = x + dx[d];
 				int cy = y + dy[d];
@@ -104,7 +105,7 @@ public class Plateau
 					{
 						this.matriceAretes[i][targetIndex] = true;
 						this.matriceAretes[targetIndex][i] = true;
-						break; // S'arrêter au sommet le plus proche dans cette direction
+						break; // Trouvé le plus proche dans cette direction, arrêt de la recherche
 					}
 					cx += dx[d];
 					cy += dy[d];
@@ -113,64 +114,60 @@ public class Plateau
 		}
 	}
 
+	private boolean aDesAretes()
+	{
+		for (int i = 0; i < this.matriceAretes.length; i++)
+		{
+			for (int j = 0; j < this.matriceAretes[i].length; j++)
+			{
+				if (this.matriceAretes[i][j]) return true;
+			}
+		}
+		return false;
+	}
+
 	public boolean chargerPlateau(File file)
 	{
 		try (Scanner scanner = new Scanner(file))
 		{
 			if (!scanner.hasNextLine()) return false;
-			String firstLine = scanner.nextLine();
-			String[] dim = firstLine.split(";");
+			
+			String[] dim = scanner.nextLine().split(";");
 			this.largeur = Integer.parseInt(dim[0]);
 			this.hauteur = Integer.parseInt(dim[1]);
 			
 			int size = this.largeur * this.hauteur;
-			this.tabCases = new int[size];
+			this.tabArrondissements = new int[size];
 			this.tabStations = new int[size];
 			this.tabDeparts = new int[size];
 			this.matriceAretes = new boolean[size][size];
 
 			int cellCount = 0;
-			boolean hasEdgesInFile = false;
-
 			while (scanner.hasNextLine())
 			{
-				String line = scanner.nextLine();
-				if (line.trim().isEmpty()) continue;
+				String line = scanner.nextLine().trim();
+				if (line.isEmpty()) continue;
 				String[] parts = line.split(";");
 				
 				if (cellCount < size)
 				{
 					int index = Integer.parseInt(parts[0]);
-					if (index >= 0 && index < size)
-					{
-						this.tabCases[index] = Integer.parseInt(parts[1]);
-						if (parts.length >= 3)
-						{
-							this.tabStations[index] = Integer.parseInt(parts[2]);
-						}
-						if (parts.length >= 4)
-						{
-							this.tabDeparts[index] = Integer.parseInt(parts[3]);
-						}
-					}
+					this.tabArrondissements[index] = Integer.parseInt(parts[1]);
+					if (parts.length >= 3) this.tabStations[index] = Integer.parseInt(parts[2]);
+					if (parts.length >= 4) this.tabDeparts[index] = Integer.parseInt(parts[3]);
 					cellCount++;
 				}
 				else
 				{
-					// Ce sont des arêtes : format src;dest
 					int src = Integer.parseInt(parts[0]);
 					int dest = Integer.parseInt(parts[1]);
-					if (src >= 0 && src < size && dest >= 0 && dest < size)
-					{
-						this.matriceAretes[src][dest] = true;
-						this.matriceAretes[dest][src] = true;
-					}
-					hasEdgesInFile = true;
+					this.matriceAretes[src][dest] = true;
+					this.matriceAretes[dest][src] = true;
 				}
 			}
 
 			// Si le fichier n'avait pas d'arêtes pré-enregistrées (ex: plateau_prof.txt)
-			if (!hasEdgesInFile)
+			if (!aDesAretes())
 			{
 				genererAretesAuto();
 			}
@@ -179,7 +176,7 @@ public class Plateau
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			System.out.println("Erreur lors de la lecture du fichier : " + e.getMessage());
 			return false;
 		}
 	}
@@ -188,31 +185,24 @@ public class Plateau
 	{
 		try
 		{
-			// Regénérer les arêtes automatiquement avant d'enregistrer
 			genererAretesAuto();
 
-			java.io.File dossier = new java.io.File("sauvegarde");
-			if (!dossier.exists())
-			{
-				dossier.mkdirs();
-			}
+			File dossier = new File("sauvegarde");
+			if (!dossier.exists()) dossier.mkdirs();
 
-			File file = new java.io.File(dossier, nomFichier.endsWith(".txt") ? nomFichier : nomFichier + ".txt");
+			File file = new File(dossier, nomFichier.endsWith(".txt") ? nomFichier : nomFichier + ".txt");
 			PrintWriter pw = new PrintWriter(new FileOutputStream(file));
 
-			// Écrit la largeur et la hauteur en premier
 			pw.println(this.largeur + ";" + this.hauteur);
 
-			for (int i = 0; i < this.tabCases.length; i++)
+			for (int i = 0; i < this.tabArrondissements.length; i++)
 			{
-				pw.println(i + ";" + this.tabCases[i] + ";" + this.tabStations[i] + ";" + this.tabDeparts[i]);
+				pw.println(i + ";" + this.tabArrondissements[i] + ";" + this.tabStations[i] + ";" + this.tabDeparts[i]);
 			}
 
-			// Écrit les arêtes (uniquement une fois pour chaque paire)
-			int size = this.largeur * this.hauteur;
-			for (int i = 0; i < size; i++)
+			for (int i = 0; i < this.tabArrondissements.length; i++)
 			{
-				for (int j = i + 1; j < size; j++)
+				for (int j = i + 1; j < this.tabArrondissements.length; j++)
 				{
 					if (this.matriceAretes[i][j])
 					{
@@ -222,15 +212,12 @@ public class Plateau
 			}
 
 			pw.close();
+			return true;
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			System.out.println("Erreur d'enregistrement : " + e.getMessage());
 			return false;
 		}
-
-		System.out.println("Enregistrement du plateau en cours...");
-		System.out.println("Plateau validé !");
-		return true;
 	}
 }

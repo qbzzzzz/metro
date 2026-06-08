@@ -28,6 +28,10 @@ public class PanelJeu extends JPanel implements ActionListener
 	private JComboBox<String> comboDepart;
 	private JButton btnSauvegarder;
 
+	private JComboBox<String> comboFichiersImport;
+	private JButton btnImporter;
+	private JButton btnCreerNouveau;
+
 	private Image[] stationImages = new Image[11]; // index 1 to 10
 
 	private String[] nomsStations = {
@@ -68,7 +72,7 @@ public class PanelJeu extends JPanel implements ActionListener
 		this.frame = frame;
 		this.ctrl = ctrl;
 
-		this.setPreferredSize(new Dimension(900, 580));
+		this.setPreferredSize(new Dimension(900, 640));
 		this.setLayout(new BorderLayout(20, 20));
 		this.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
@@ -78,7 +82,7 @@ public class PanelJeu extends JPanel implements ActionListener
 		this.panelGauche = new JPanel();
 		this.panelGauche.setLayout(new BoxLayout(this.panelGauche, BoxLayout.Y_AXIS));
 		this.panelGauche.setBorder(BorderFactory.createTitledBorder("Informations du Jeu"));
-		this.panelGauche.setPreferredSize(new Dimension(280, 520));
+		this.panelGauche.setPreferredSize(new Dimension(280, 580));
 
 		int nbJoueurs = this.ctrl.getNbJoueurs();
 		int nbStations = this.ctrl.getNbStations();
@@ -98,6 +102,38 @@ public class PanelJeu extends JPanel implements ActionListener
 		this.panelGauche.add(Box.createVerticalStrut(10));
 		this.panelGauche.add(this.lblStations);
 		this.panelGauche.add(Box.createVerticalStrut(20));
+
+		// Import / Création de fichier
+		JLabel lblFichier = new JLabel("Fichier de sauvegarde :");
+		lblFichier.setFont(new Font("Arial", Font.BOLD, 12));
+		lblFichier.setAlignmentX(Component.LEFT_ALIGNMENT);
+		this.panelGauche.add(lblFichier);
+		this.panelGauche.add(Box.createVerticalStrut(5));
+
+		this.comboFichiersImport = new JComboBox<>();
+		this.comboFichiersImport.setMaximumSize(new Dimension(260, 30));
+		this.comboFichiersImport.setAlignmentX(Component.LEFT_ALIGNMENT);
+		mettreAJourComboFichiers();
+		this.panelGauche.add(this.comboFichiersImport);
+		this.panelGauche.add(Box.createVerticalStrut(5));
+
+		this.btnImporter = new JButton("Charger le plateau");
+		this.btnImporter.setAlignmentX(Component.LEFT_ALIGNMENT);
+		this.btnImporter.addActionListener(this);
+		this.panelGauche.add(this.btnImporter);
+		this.panelGauche.add(Box.createVerticalStrut(10));
+
+		this.btnCreerNouveau = new JButton("Créer un nouveau plateau");
+		this.btnCreerNouveau.setAlignmentX(Component.LEFT_ALIGNMENT);
+		this.btnCreerNouveau.addActionListener(this);
+		this.panelGauche.add(this.btnCreerNouveau);
+		this.panelGauche.add(Box.createVerticalStrut(20));
+
+		JSeparator sep = new JSeparator();
+		sep.setMaximumSize(new Dimension(260, 10));
+		sep.setAlignmentX(Component.LEFT_ALIGNMENT);
+		this.panelGauche.add(sep);
+		this.panelGauche.add(Box.createVerticalStrut(15));
 
 		// Sélection et séparation du métro et de la base départ
 		JLabel lblPlacement = new JLabel("Mode de placement :");
@@ -208,7 +244,7 @@ public class PanelJeu extends JPanel implements ActionListener
 		this.panelApercuGrille.setBackground(Color.GRAY);
 		this.panelApercuGrille.setLayout(new GridBagLayout()); // Centrer le message d'attente
 		
-		JLabel lblInfo = new JLabel("<html><center>Utilisez le menu <b>Fichier &gt; Importer une sauvegarde</b><br>pour voir et éditer le plateau.</center></html>");
+		JLabel lblInfo = new JLabel("<html><center>Sélectionnez une sauvegarde à gauche et cliquez sur <b>Charger le plateau</b></center></html>");
 		this.panelApercuGrille.add(lblInfo);
 
 		this.panelDroite.add(this.panelApercuGrille, BorderLayout.CENTER);
@@ -216,6 +252,26 @@ public class PanelJeu extends JPanel implements ActionListener
 		// Ajout au panel principal
 		this.add(this.panelGauche, BorderLayout.WEST);
 		this.add(this.panelDroite, BorderLayout.CENTER);
+	}
+
+	private void mettreAJourComboFichiers()
+	{
+		this.comboFichiersImport.removeAllItems();
+		File dir = new File("sauvegarde");
+		if (dir.exists() && dir.isDirectory())
+		{
+			File[] list = dir.listFiles();
+			if (list != null)
+			{
+				for (File f : list)
+				{
+					if (f.isFile() && f.getName().endsWith(".txt"))
+					{
+						this.comboFichiersImport.addItem(f.getName());
+					}
+				}
+			}
+		}
 	}
 
 	private void mettreAJourComboPlacement()
@@ -246,25 +302,17 @@ public class PanelJeu extends JPanel implements ActionListener
 		}
 	}
 
-	private int getNbBases(int nbJoueurs)
-	{
-		if (nbJoueurs == 2) return 4;
-		if (nbJoueurs == 3) return 3;
-		if (nbJoueurs == 4) return 2;
-		return 1;
-	}
-
 	public void actionPerformed(ActionEvent e)
 	{
-		if (e.getActionCommand() != null && e.getActionCommand().equals("Importer une sauvegarde"))
+		if (e.getSource() == this.btnImporter)
 		{
 			importerSauvegarde();
 		}
-		else if (e.getActionCommand() != null && e.getActionCommand().equals("Créer un nouveau plateau"))
+		if (e.getSource() == this.btnCreerNouveau)
 		{
 			creerNouveauPlateau();
 		}
-		else if (e.getSource() == this.btnSauvegarder)
+		if (e.getSource() == this.btnSauvegarder)
 		{
 			sauvegarderPlateau();
 		}
@@ -278,19 +326,22 @@ public class PanelJeu extends JPanel implements ActionListener
 
 	private void importerSauvegarde()
 	{
-		File dir = new File("sauvegarde");
-		if (!dir.exists())
+		Object selectedItem = this.comboFichiersImport.getSelectedItem();
+		if (selectedItem == null)
 		{
-			dir.mkdirs();
+			System.out.println("Aucune sauvegarde sélectionnée.");
+			return;
 		}
 
-		JFileChooser fileChooser = new JFileChooser(dir);
-		int result = fileChooser.showOpenDialog(this);
-		if (result == JFileChooser.APPROVE_OPTION)
+		String nomFichier = selectedItem.toString();
+		File file = new File("sauvegarde", nomFichier);
+		if (!file.exists())
 		{
-			File selectedFile = fileChooser.getSelectedFile();
-			chargerApercu(selectedFile);
+			System.out.println("Le fichier sauvegarde/" + file.getName() + " n'existe pas.");
+			return;
 		}
+
+		chargerApercu(file);
 	}
 
 	private void chargerApercu(File file)
@@ -343,10 +394,7 @@ public class PanelJeu extends JPanel implements ActionListener
 		}
 		else
 		{
-			JOptionPane.showMessageDialog(this,
-				"Erreur lors de la lecture ou de l'analyse du fichier.",
-				"Erreur d'importation",
-				JOptionPane.ERROR_MESSAGE);
+			System.out.println("Erreur lors de la lecture ou de l'analyse du fichier.");
 		}
 	}
 
@@ -369,28 +417,19 @@ public class PanelJeu extends JPanel implements ActionListener
 				}
 				if (count != 1)
 				{
-					JOptionPane.showMessageDialog(this,
-						"Erreur : Le joueur " + p + " doit avoir exactement UNE base de départ sur le plateau.\nActuellement : " + count + " placée(s).",
-						"Validation requise",
-						JOptionPane.ERROR_MESSAGE);
+					System.out.println("Erreur : Le joueur " + p + " doit avoir exactement UNE base de départ sur le plateau. Actuellement : " + count + " placée(s).");
 					return;
 				}
 			}
 
 			if (this.ctrl.enregistrerPlateau(this.fichierCharge.getName()))
 			{
-				JOptionPane.showMessageDialog(this,
-					"Plateau sauvegardé avec succès et écrasé dans :\n" + this.fichierCharge.getAbsolutePath(),
-					"Sauvegarde Réussie",
-					JOptionPane.INFORMATION_MESSAGE);
+				System.out.println("Plateau sauvegardé avec succès et écrasé dans : " + this.fichierCharge.getAbsolutePath());
 				this.frame.dispose();
 			}
 			else
 			{
-				JOptionPane.showMessageDialog(this,
-					"Erreur lors de l'enregistrement du plateau.",
-					"Erreur de sauvegarde",
-					JOptionPane.ERROR_MESSAGE);
+				System.out.println("Erreur lors de l'enregistrement du plateau.");
 			}
 		}
 	}
@@ -556,22 +595,9 @@ public class PanelJeu extends JPanel implements ActionListener
 			int depart = ctrl.getDepart(index);
 			if (depart > 0)
 			{
-				int badgeSize = Math.min(w, h) / 3;
-				if (badgeSize < 16) badgeSize = 16;
-				int bx = w - badgeSize - 2;
-				int by = 2;
-
-				g.setColor(Color.DARK_GRAY);
-				g.fillOval(bx, by, badgeSize, badgeSize);
-				g.setColor(Color.WHITE);
-				g.drawOval(bx, by, badgeSize, badgeSize);
-
-				g.setFont(new Font("Arial", Font.BOLD, (int)(badgeSize * 0.7)));
-				FontMetrics fm = g.getFontMetrics();
-				String txt = "D" + depart;
-				int tx = bx + (badgeSize - fm.stringWidth(txt)) / 2;
-				int ty = by + ((badgeSize - fm.getHeight()) / 2) + fm.getAscent();
-				g.drawString(txt, tx, ty);
+				g.setColor(Color.BLACK);
+				g.setFont(new Font("Arial", Font.BOLD, 14));
+				g.drawString("D" + depart, 5, 18);
 			}
 		}
 	}
