@@ -60,53 +60,53 @@ public class PanelConfiguration extends JPanel implements ActionListener
 		this.lblLargeur = new JLabel("Taille en largeur :");
 		this.lblLargeur	.setForeground(Color.WHITE);
 		this.lblLargeur	.setFont(labelFont);
-		txtLargeur 		= new JTextField();
+		txtLargeur 		= new JTextField(5);
 
 		this.lblHauteur = new JLabel("Taille en hauteur :");
 		this.lblHauteur	.setForeground(Color.WHITE);
 		this.lblHauteur	.setFont(labelFont);
-		txtHauteur 		= new JTextField();
+		txtHauteur 		= new JTextField(5);
 
 		this.lblJoueurs = new JLabel("Nombre de joueurs (max 4) :");
 		this.lblJoueurs	.setForeground(Color.WHITE);
 		this.lblJoueurs	.setFont(labelFont);
-		txtJoueurs 		= new JTextField();
+		txtJoueurs 		= new JTextField(5);
 
 		this.lblStation = new JLabel("Nombre de types de station (max 6) :");
 		this.lblStation	.setForeground(Color.WHITE);
 		this.lblStation	.setFont(labelFont);
-		txtStation 		= new JTextField();
+		txtStation 		= new JTextField(5);
 
-		this.lblArrondissments 	= new JLabel("Nombre d'arrondissements (max 20) :");
+		this.lblArrondissments = new JLabel("Nombre d'arrondissements (max 20) :");
 		this.lblArrondissments	.setForeground(Color.WHITE);
 		this.lblArrondissments	.setFont(labelFont);
-		txtArrondissments 		= new JTextField();
+		txtArrondissments 		= new JTextField(5);
 
 		this.lblTailleCases = new JLabel("Taille des cases :");
 		this.lblTailleCases	.setForeground(Color.WHITE);
 		this.lblTailleCases	.setFont(labelFont);
-		txtTailleCases 		= new JTextField();
+		txtTailleCases 		= new JTextField(5);
 
 		this.btnValider = new JButton("Valider");
 		this.btnAnnuler = new JButton("Annuler");
 
 		this.panelConfiguration.add(this.lblLargeur);
-		this.panelConfiguration.add(txtLargeur);
+		this.panelConfiguration.add(creerPanelAjuste(txtLargeur));
 
 		this.panelConfiguration.add(this.lblHauteur);
-		this.panelConfiguration.add(txtHauteur);
+		this.panelConfiguration.add(creerPanelAjuste(txtHauteur));
 
 		this.panelConfiguration.add(this.lblJoueurs);
-		this.panelConfiguration.add(txtJoueurs);
+		this.panelConfiguration.add(creerPanelAjuste(txtJoueurs));
 
 		this.panelConfiguration.add(this.lblStation);
-		this.panelConfiguration.add(txtStation);
+		this.panelConfiguration.add(creerPanelAjuste(txtStation));
 
 		this.panelConfiguration.add(this.lblArrondissments);
-		this.panelConfiguration.add(txtArrondissments);
+		this.panelConfiguration.add(creerPanelAjuste(txtArrondissments));
 
 		this.panelConfiguration.add(this.lblTailleCases);
-		this.panelConfiguration.add(txtTailleCases);
+		this.panelConfiguration.add(creerPanelAjuste(txtTailleCases));
 
 		this.panelConfiguration.add(this.btnAnnuler);
 		this.panelConfiguration.add(this.btnValider);
@@ -128,6 +128,14 @@ public class PanelConfiguration extends JPanel implements ActionListener
 		/*---------------------------*/
 		this.btnAnnuler.addActionListener(this);
 		this.btnValider.addActionListener(this);
+	}
+
+	private JPanel creerPanelAjuste(JTextField tf)
+	{
+		JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		p.setOpaque(false);
+		p.add(tf);
+		return p;
 	}
 
 	protected void paintComponent(Graphics g)

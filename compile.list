@@ -1,5 +1,10 @@
 ./plateau/Controleur.java
 ./plateau/metier/Plateau.java
+./plateau/metier/GraphePlateau.java
+./plateau/metier/ChargeurPlateau.java
+./plateau/metier/EnregistreurPlateau.java
+./plateau/metier/ValidateurPlateau.java
+./plateau/metier/ConfigurationPlateau.java
 ./plateau/ihm/FrameAccueil.java
 ./plateau/ihm/FrameConfiguration.java
 ./plateau/ihm/FrameCreation.java

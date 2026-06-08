@@ -1,7 +1,7 @@
 package plateau;
 
 import plateau.ihm.FrameAccueil;
-import plateau.metier.Plateau;
+import plateau.metier.*;
 
 public class Controleur
 {
@@ -38,9 +38,15 @@ public class Controleur
 		return this.nbStations;
 	}
 
-	public boolean chargerPlateau(java.io.File file)
+	public boolean chargerPlateau(java.io.File fichier)
 	{
-		return this.metier.chargerPlateau(file);
+		Plateau p = ChargeurPlateau.charger(fichier);
+		if (p != null)
+		{
+			this.metier = p;
+			return true;
+		}
+		return false;
 	}
 
 	public int getLargeur()
@@ -80,17 +86,22 @@ public class Controleur
 
 	public boolean aArete(int i, int j)
 	{
-		return this.metier.aArete(i, j);
+		return this.metier.getGraphe().aArete(i, j);
+	}
+
+	public int getNbAretes()
+	{
+		return this.metier.getGraphe().getNbAretes();
 	}
 
 	public void genererAretesAuto()
 	{
-		this.metier.genererAretesAuto();
+		this.metier.getGraphe().genererAretesAuto(this.metier);
 	}
 
 	public boolean enregistrerPlateau(String nomFichier)
 	{
-		return this.metier.enregistrerPlateau(nomFichier);
+		return EnregistreurPlateau.enregistrer(this.metier, nomFichier);
 	}
 
 	public void affecterArrondissement(int numCase, int arrondissement)
@@ -100,19 +111,19 @@ public class Controleur
 
 	public String getImageFond()
 	{
-		String[] paths = {
+		String[] chemins = {
 			"plateau/images/fond.png",
 			"images/fond.png",
 			"../plateau/images/fond.png",
 			"../../plateau/images/fond.png"
 		};
 
-		for (String path : paths)
+		for (String chemin : chemins)
 		{
-			java.io.File file = new java.io.File(path);
-			if (file.exists())
+			java.io.File fichier = new java.io.File(chemin);
+			if (fichier.exists())
 			{
-				return file.getAbsolutePath();
+				return fichier.getAbsolutePath();
 			}
 		}
 
@@ -121,23 +132,34 @@ public class Controleur
 
 	public String getImageFond2()
 	{
-		String[] paths = {
+		String[] chemins = {
 			"plateau/images/fond2.png",
 			"images/fond2.png",
 			"../plateau/images/fond2.png",
 			"../../plateau/images/fond2.png"
 		};
 
-		for (String path : paths)
+		for (String chemin : chemins)
 		{
-			java.io.File file = new java.io.File(path);
-			if (file.exists())
+			java.io.File fichier = new java.io.File(chemin);
+			if (fichier.exists())
 			{
-				return file.getAbsolutePath();
+				return fichier.getAbsolutePath();
 			}
 		}
 
 		return "plateau/images/fond2.png";
+	}
+
+	public void mettreAJourConfigurationDepuisPlateau()
+	{
+		int[] maxConfig = ConfigurationPlateau.detecterMaxJoueursEtStations(this.metier, this.nbJoueurs, this.nbStations);
+		this.setConfigJeu(maxConfig[0], maxConfig[1]);
+	}
+
+	public boolean validerDepartsPlateau()
+	{
+		return ValidateurPlateau.validerDeparts(this.metier, this.nbJoueurs);
 	}
 
 	public static void main(String[] a)

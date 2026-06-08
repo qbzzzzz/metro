@@ -20,6 +20,7 @@ public class PanelJeu extends JPanel implements ActionListener
 
 	private JLabel lblJoueurs;
 	private JLabel lblStations;
+	private JLabel lblAretes;
 	private JLabel lblApercuTitre;
 
 	private JRadioButton rbStation;
@@ -89,22 +90,27 @@ public class PanelJeu extends JPanel implements ActionListener
 
 		this.lblJoueurs = new JLabel("Nombre de joueurs : " + nbJoueurs);
 		this.lblStations  = new JLabel("Nombre de stations : " + nbStations);
+		this.lblAretes = new JLabel("Nombre d'arêtes : 0");
 
 		// Style
 		Font fontLabel = new Font("Arial", Font.BOLD, 14);
 		this.lblJoueurs.setFont(fontLabel);
 		this.lblStations.setFont(fontLabel);
+		this.lblAretes.setFont(fontLabel);
 
 		this.lblJoueurs.setAlignmentX(Component.LEFT_ALIGNMENT);
 		this.lblStations.setAlignmentX(Component.LEFT_ALIGNMENT);
+		this.lblAretes.setAlignmentX(Component.LEFT_ALIGNMENT);
 
 		this.panelGauche.add(this.lblJoueurs);
 		this.panelGauche.add(Box.createVerticalStrut(10));
 		this.panelGauche.add(this.lblStations);
+		this.panelGauche.add(Box.createVerticalStrut(10));
+		this.panelGauche.add(this.lblAretes);
 		this.panelGauche.add(Box.createVerticalStrut(20));
 
 		// Import / Création de fichier
-		JLabel lblFichier = new JLabel("Fichier de sauvegarde :");
+		JLabel lblFichier = new JLabel("Fichier du plateau :");
 		lblFichier.setFont(new Font("Arial", Font.BOLD, 12));
 		lblFichier.setAlignmentX(Component.LEFT_ALIGNMENT);
 		this.panelGauche.add(lblFichier);
@@ -350,16 +356,8 @@ public class PanelJeu extends JPanel implements ActionListener
 		{
 			this.fichierCharge = file;
 
-			// Scanner pour mettre à jour automatiquement les infos de stations et de joueurs si le fichier contient des valeurs supérieures
-			int maxStations = this.ctrl.getNbStations();
-			int maxJoueurs = this.ctrl.getNbJoueurs();
-			int size = this.ctrl.getLargeur() * this.ctrl.getHauteur();
-			for (int i = 0; i < size; i++)
-			{
-				maxStations = Math.max(maxStations, this.ctrl.getStation(i));
-				maxJoueurs = Math.max(maxJoueurs, this.ctrl.getDepart(i));
-			}
-			this.ctrl.setConfigJeu(maxJoueurs, maxStations);
+			// Mise à jour de la configuration via le contrôleur (métier)
+			this.ctrl.mettreAJourConfigurationDepuisPlateau();
 
 			// Mettre à jour l'affichage gauche
 			int nbJoueurs = this.ctrl.getNbJoueurs();
@@ -367,6 +365,7 @@ public class PanelJeu extends JPanel implements ActionListener
 
 			this.lblJoueurs.setText("Nombre de joueurs : " + nbJoueurs);
 			this.lblStations.setText("Nombre de stations : " + nbStations);
+			this.lblAretes.setText("Nombre d'arêtes : " + this.ctrl.getNbAretes());
 
 			mettreAJourComboPlacement();
 			this.btnSauvegarder.setEnabled(true);
@@ -378,6 +377,7 @@ public class PanelJeu extends JPanel implements ActionListener
 			this.panelApercuGrille.setLayout(new GridLayout(hauteur, largeur, 2, 2));
 			this.panelApercuGrille.setBackground(Color.DARK_GRAY);
 
+			int size = largeur * hauteur;
 			for (int i = 0; i < size; i++)
 			{
 				CasePanel cell = new CasePanel(i);
@@ -402,24 +402,10 @@ public class PanelJeu extends JPanel implements ActionListener
 	{
 		if (this.fichierCharge != null)
 		{
-			// Validation : Exactement UNE et UNE SEULE base de départ par joueur obligatoire
-			int nbJoueurs = this.ctrl.getNbJoueurs();
-			int size = this.ctrl.getLargeur() * this.ctrl.getHauteur();
-			for (int p = 1; p <= nbJoueurs; p++)
+			// Validation métier déléguée au contrôleur
+			if (!this.ctrl.validerDepartsPlateau())
 			{
-				int count = 0;
-				for (int i = 0; i < size; i++)
-				{
-					if (this.ctrl.getDepart(i) == p)
-					{
-						count++;
-					}
-				}
-				if (count != 1)
-				{
-					System.out.println("Erreur : Le joueur " + p + " doit avoir exactement UNE base de départ sur le plateau. Actuellement : " + count + " placée(s).");
-					return;
-				}
+				return;
 			}
 
 			if (this.ctrl.enregistrerPlateau(this.fichierCharge.getName()))
@@ -434,7 +420,7 @@ public class PanelJeu extends JPanel implements ActionListener
 		}
 	}
 
-	private void cellClicked(int index)
+	private void caseCliquee(int index)
 	{
 		if (this.rbStation.isSelected())
 		{
@@ -480,57 +466,58 @@ public class PanelJeu extends JPanel implements ActionListener
 			}
 			else if (selected.startsWith("Joueur "))
 			{
-				int playerNum = Integer.parseInt(selected.substring(7));
+				int numJoueur = Integer.parseInt(selected.substring(7));
 
-				// Enforce ONE and ONLY ONE starting base per player:
-				// Clear any other cell currently set to this player start
-				int size = this.ctrl.getLargeur() * this.ctrl.getHauteur();
-				for (int i = 0; i < size; i++)
+				// Garantir UNE et UNIQUE base de départ par joueur :
+				// Retirer tout autre case déjà affectée à ce joueur
+				int taille = this.ctrl.getLargeur() * this.ctrl.getHauteur();
+				for (int i = 0; i < taille; i++)
 				{
-					if (this.ctrl.getDepart(i) == playerNum)
+					if (this.ctrl.getDepart(i) == numJoueur)
 					{
 						this.ctrl.affecterDepart(i, 0);
 					}
 				}
 
-				this.ctrl.affecterDepart(index, playerNum);
+				this.ctrl.affecterDepart(index, numJoueur);
 			}
 		}
 
 		// Recalculer les arêtes après modification
 		this.ctrl.genererAretesAuto();
+		this.lblAretes.setText("Nombre d'arêtes : " + this.ctrl.getNbAretes());
 		this.panelApercuGrille.repaint();
 	}
 
-	private Image getStationImage(int stationNum)
+	private Image getImageStation(int stationNum)
 	{
 		if (stationNum < 1 || stationNum >= stationImages.length) return null;
 		if (stationImages[stationNum] == null)
 		{
-			String path = getStationImagePath(stationNum);
-			if (path != null)
+			String chemin = getCheminImageStation(stationNum);
+			if (chemin != null)
 			{
-				ImageIcon icon = new ImageIcon(path);
+				ImageIcon icon = new ImageIcon(chemin);
 				stationImages[stationNum] = icon.getImage();
 			}
 		}
 		return stationImages[stationNum];
 	}
 
-	private String getStationImagePath(int stationNum)
+	private String getCheminImageStation(int stationNum)
 	{
-		String[] paths = {
+		String[] chemins = {
 			"plateau/images/" + stationNum + ".png",
 			"images/" + stationNum + ".png",
 			"../plateau/images/" + stationNum + ".png",
 			"../../plateau/images/" + stationNum + ".png"
 		};
-		for (String path : paths)
+		for (String chemin : chemins)
 		{
-			java.io.File file = new java.io.File(path);
-			if (file.exists())
+			java.io.File fichier = new java.io.File(chemin);
+			if (fichier.exists())
 			{
-				return file.getAbsolutePath();
+				return fichier.getAbsolutePath();
 			}
 		}
 		return "plateau/images/" + stationNum + ".png";
@@ -552,7 +539,7 @@ public class PanelJeu extends JPanel implements ActionListener
 			{
 				public void mousePressed(MouseEvent e)
 				{
-					cellClicked(CasePanel.this.index);
+					caseCliquee(CasePanel.this.index);
 				}
 			});
 		}
@@ -584,7 +571,7 @@ public class PanelJeu extends JPanel implements ActionListener
 			int station = ctrl.getStation(index);
 			if (station > 0)
 			{
-				Image img = getStationImage(station);
+				Image img = getImageStation(station);
 				if (img != null)
 				{
 					g.drawImage(img, 2, 2, w - 4, h - 4, this);

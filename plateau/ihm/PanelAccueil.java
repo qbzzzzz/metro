@@ -64,7 +64,43 @@ public class PanelAccueil extends JPanel implements ActionListener
         }
         else if (e.getSource() == this.btnRegles)
         {
-            System.out.println("Affichage des règles du jeu...");
+            try
+            {
+                // Tenter de trouver le PDF des règles ou du sujet de la SAE
+                String[] cheminsRegles = {
+                    "Règle les Cartographes du Métro.pdf",
+                    "../Règle les Cartographes du Métro.pdf",
+                    "../sae/Projet_1 Exercice 1.pdf",
+                    "../sae/Projet_1 Exercice 2.pdf",
+                    "../sae/Projet_2 Exercice 1.pdf",
+                    "../sae/Projet_2 Exercice 2.pdf",
+                    "../ppp.pdf"
+                };
+
+                java.io.File fichierPdf = null;
+                for (String ch : cheminsRegles)
+                {
+                    java.io.File testFichier = new java.io.File(ch);
+                    if (testFichier.exists())
+                    {
+                        fichierPdf = testFichier;
+                        break;
+                    }
+                }
+
+                if (fichierPdf != null && java.awt.Desktop.isDesktopSupported())
+                {
+                    java.awt.Desktop.getDesktop().open(fichierPdf);
+                }
+                else
+                {
+                    System.out.println("Fichier regles_du_jeu.pdf introuvable.");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.out.println("Erreur lors de l'ouverture des règles : " + ex.getMessage());
+            }
         }
     }
 

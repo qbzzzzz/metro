@@ -94,7 +94,7 @@ public class PanelCreation extends JPanel implements MouseListener, MouseMotionL
 
 		// Label et Champ de texte pour le nom du fichier
 		JPanel panelNom = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		JLabel lblNom = new JLabel("Nom de la sauvegarde :");
+		JLabel lblNom = new JLabel("Nom du plateau :");
 		this.txtNomFichier = new JTextField(15);
 		this.txtNomFichier.setText("mon_plateau");
 		panelNom.add(lblNom);
