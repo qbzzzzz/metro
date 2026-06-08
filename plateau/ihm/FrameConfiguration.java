@@ -9,19 +9,19 @@ import javax.swing.*;
 
 public class FrameConfiguration extends JFrame
 {
-    public FrameConfiguration(Controleur ctrl)
-    {
-        this.setTitle       ("Configuration Plateau");
+	public FrameConfiguration(Controleur ctrl)
+	{
+		this.setTitle("Configuration Plateau");
 
-        this.setLayout ( new FlowLayout() );
+		this.setLayout(new FlowLayout());
 
-        this.add(new PanelConfiguration(this, ctrl));
+		this.add(new PanelConfiguration(this, ctrl));
 
-        this.setDefaultCloseOperation ( JFrame.EXIT_ON_CLOSE );
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        this.pack();
-        this.setLocationRelativeTo(null); // Centre la fenêtre
-        this.setVisible ( true );
-    }
+		this.pack();
+		this.setLocationRelativeTo(null); // Centre la fenêtre
+		this.setVisible(true);
+	}
 
 }

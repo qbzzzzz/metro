@@ -5,6 +5,8 @@
 ./plateau/metier/EnregistreurPlateau.java
 ./plateau/metier/ValidateurPlateau.java
 ./plateau/metier/ConfigurationPlateau.java
+./plateau/metier/UtilitaireJeu.java
+./plateau/metier/GestionnairePlacement.java
 ./plateau/ihm/FrameAccueil.java
 ./plateau/ihm/FrameConfiguration.java
 ./plateau/ihm/FrameCreation.java
@@ -13,3 +15,5 @@
 ./plateau/ihm/PanelConfiguration.java
 ./plateau/ihm/PanelCreation.java
 ./plateau/ihm/PanelJeu.java
+./plateau/ihm/CasePanel.java
+./plateau/ihm/EcouteurJeu.java

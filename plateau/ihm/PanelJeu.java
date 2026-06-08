@@ -1,14 +1,14 @@
 package plateau.ihm;
 
 import plateau.Controleur;
+import plateau.metier.UtilitaireJeu;
+import plateau.metier.GestionnairePlacement;
 
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 import java.io.File;
-import java.util.Scanner;
 
-public class PanelJeu extends JPanel implements ActionListener
+public class PanelJeu extends JPanel
 {
 	private FrameJeu frame;
 	private Controleur ctrl;
@@ -33,66 +33,28 @@ public class PanelJeu extends JPanel implements ActionListener
 	private JButton btnImporter;
 	private JButton btnCreerNouveau;
 
-	private Image[] stationImages = new Image[11]; // index 1 to 10
-
-	private String[] nomsStations = {
-		"Tour Eiffel",
-		"Moulin Rouge",
-		"Louvre",
-		"Restaurant",
-		"Gare",
-		"Aéroport"
-	};
-
-	private Color[] tabCouleurs = 
-	{
-		new Color(255, 105, 180), // rose vif
-		new Color(138, 43, 226),  // violet
-		new Color(255, 165, 0),   // orange
-		new Color(0, 255, 255),   // cyan
-		new Color(176, 196, 222), // bleu acier clair
-		new Color(255, 20, 147),  // rose profond
-		new Color(186, 85, 211),  // orchidée
-		new Color(148, 0, 211),   // violet foncé
-		new Color(210, 105, 30),  // chocolat
-		new Color(244, 164, 96),  // sable
-		new Color(199, 21, 133),  // violet rougeâtre
-		new Color(123, 104, 238), // bleu-violet doux
-		new Color(255, 140, 0),   // orange foncé
-		new Color(0, 206, 209),   // turquoise
-		new Color(72, 61, 139),   // bleu nuit
-		new Color(220, 20, 60),   // cramoisi
-		new Color(169, 169, 169), // gris foncé
-		new Color(245, 222, 179), // beige
-		new Color(255, 228, 225), // rose très pâle
-		new Color(255, 192, 203)  // rose clair
-	};
+	private Image[] stationImages = new Image[11];
+	private EcouteurJeu ecouteur;
 
 	public PanelJeu(FrameJeu frame, Controleur ctrl)
 	{
 		this.frame = frame;
 		this.ctrl = ctrl;
+		this.ecouteur = new EcouteurJeu(this);
 
 		this.setPreferredSize(new Dimension(900, 640));
 		this.setLayout(new BorderLayout(20, 20));
 		this.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-		/*-----------------------------*/
-		/* Panneau Gauche (Paramètres) */
-		/*-----------------------------*/
 		this.panelGauche = new JPanel();
 		this.panelGauche.setLayout(new BoxLayout(this.panelGauche, BoxLayout.Y_AXIS));
 		this.panelGauche.setBorder(BorderFactory.createTitledBorder("Informations du Jeu"));
 		this.panelGauche.setPreferredSize(new Dimension(280, 580));
 
-		int nbJoueurs = this.ctrl.getNbJoueurs();
-		int nbStations = this.ctrl.getNbStations();
-
-		this.lblJoueurs = new JLabel("Nombre de joueurs : " + nbJoueurs);
-		this.lblStations  = new JLabel("Nombre de stations : " + nbStations);
+		this.lblJoueurs = new JLabel("Nombre de joueurs : " + this.ctrl.getNbJoueurs());
+		this.lblStations  = new JLabel("Nombre de stations : " + this.ctrl.getNbStations());
 		this.lblAretes = new JLabel("Nombre d'arêtes : 0");
 
-		// Style
 		Font fontLabel = new Font("Arial", Font.BOLD, 14);
 		this.lblJoueurs.setFont(fontLabel);
 		this.lblStations.setFont(fontLabel);
@@ -109,7 +71,6 @@ public class PanelJeu extends JPanel implements ActionListener
 		this.panelGauche.add(this.lblAretes);
 		this.panelGauche.add(Box.createVerticalStrut(20));
 
-		// Import / Création de fichier
 		JLabel lblFichier = new JLabel("Fichier du plateau :");
 		lblFichier.setFont(new Font("Arial", Font.BOLD, 12));
 		lblFichier.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -125,13 +86,13 @@ public class PanelJeu extends JPanel implements ActionListener
 
 		this.btnImporter = new JButton("Charger le plateau");
 		this.btnImporter.setAlignmentX(Component.LEFT_ALIGNMENT);
-		this.btnImporter.addActionListener(this);
+		this.btnImporter.addActionListener(this.ecouteur);
 		this.panelGauche.add(this.btnImporter);
 		this.panelGauche.add(Box.createVerticalStrut(10));
 
 		this.btnCreerNouveau = new JButton("Créer un nouveau plateau");
 		this.btnCreerNouveau.setAlignmentX(Component.LEFT_ALIGNMENT);
-		this.btnCreerNouveau.addActionListener(this);
+		this.btnCreerNouveau.addActionListener(this.ecouteur);
 		this.panelGauche.add(this.btnCreerNouveau);
 		this.panelGauche.add(Box.createVerticalStrut(20));
 
@@ -141,7 +102,6 @@ public class PanelJeu extends JPanel implements ActionListener
 		this.panelGauche.add(sep);
 		this.panelGauche.add(Box.createVerticalStrut(15));
 
-		// Sélection et séparation du métro et de la base départ
 		JLabel lblPlacement = new JLabel("Mode de placement :");
 		lblPlacement.setFont(new Font("Arial", Font.BOLD, 14));
 		lblPlacement.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -167,7 +127,6 @@ public class PanelJeu extends JPanel implements ActionListener
 		this.comboDepart.setMaximumSize(new Dimension(260, 30));
 		this.comboDepart.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-		// Synchronisation de l'activation des JComboBoxes
 		this.rbStation.addActionListener(e -> {
 			this.comboStation.setEnabled(true);
 			this.comboDepart.setEnabled(false);
@@ -177,7 +136,6 @@ public class PanelJeu extends JPanel implements ActionListener
 			this.comboDepart.setEnabled(true);
 		});
 
-		// État initial
 		this.comboStation.setEnabled(true);
 		this.comboDepart.setEnabled(false);
 
@@ -192,17 +150,13 @@ public class PanelJeu extends JPanel implements ActionListener
 		this.panelGauche.add(this.comboDepart);
 		this.panelGauche.add(Box.createVerticalStrut(30));
 
-		// Bouton de sauvegarde
 		this.btnSauvegarder = new JButton("Sauvegarder les modifications");
 		this.btnSauvegarder.setFont(new Font("Arial", Font.BOLD, 12));
 		this.btnSauvegarder.setAlignmentX(Component.LEFT_ALIGNMENT);
 		this.btnSauvegarder.setEnabled(false);
-		this.btnSauvegarder.addActionListener(this);
+		this.btnSauvegarder.addActionListener(this.ecouteur);
 		this.panelGauche.add(this.btnSauvegarder);
 
-		/*---------------------------*/
-		/* Panneau Droit (Aperçu)    */
-		/*---------------------------*/
 		this.panelDroite = new JPanel(new BorderLayout(10, 10));
 		this.panelDroite.setBorder(BorderFactory.createTitledBorder("Plateau Interactif"));
 
@@ -215,13 +169,11 @@ public class PanelJeu extends JPanel implements ActionListener
 			@Override
 			public void paint(Graphics g)
 			{
-				super.paint(g); // Dessine le fond et les cases
-				
-				// Dessiner les arêtes par-dessus les cases
+				super.paint(g);
 				Graphics2D g2d = (Graphics2D) g;
 				g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 				g2d.setStroke(new BasicStroke(3));
-				g2d.setColor(new Color(160, 160, 160, 200)); // Gris semi-transparent
+				g2d.setColor(new Color(160, 160, 160, 200));
 
 				int size = ctrl.getLargeur() * ctrl.getHauteur();
 				if (getComponentCount() == size)
@@ -248,17 +200,25 @@ public class PanelJeu extends JPanel implements ActionListener
 			}
 		};
 		this.panelApercuGrille.setBackground(Color.GRAY);
-		this.panelApercuGrille.setLayout(new GridBagLayout()); // Centrer le message d'attente
+		this.panelApercuGrille.setLayout(new GridBagLayout());
 		
 		JLabel lblInfo = new JLabel("<html><center>Sélectionnez une sauvegarde à gauche et cliquez sur <b>Charger le plateau</b></center></html>");
 		this.panelApercuGrille.add(lblInfo);
 
 		this.panelDroite.add(this.panelApercuGrille, BorderLayout.CENTER);
 
-		// Ajout au panel principal
 		this.add(this.panelGauche, BorderLayout.WEST);
 		this.add(this.panelDroite, BorderLayout.CENTER);
 	}
+
+	// GETTERS pour l'EcouteurJeu
+	public JButton getBtnImporter() { return this.btnImporter; }
+	public JButton getBtnCreerNouveau() { return this.btnCreerNouveau; }
+	public JButton getBtnSauvegarder() { return this.btnSauvegarder; }
+	public JComboBox<String> getComboFichiersImport() { return this.comboFichiersImport; }
+	public Controleur getCtrl() { return this.ctrl; }
+	public FrameJeu getFrame() { return this.frame; }
+	public File getFichierCharge() { return this.fichierCharge; }
 
 	private void mettreAJourComboFichiers()
 	{
@@ -287,6 +247,7 @@ public class PanelJeu extends JPanel implements ActionListener
 		this.comboStation.removeAllItems();
 		this.comboStation.addItem("Aucun");
 		int nbStations = this.ctrl.getNbStations();
+		String[] nomsStations = UtilitaireJeu.getNomsStations();
 		for (int i = 1; i <= nbStations; i++)
 		{
 			if (i <= nomsStations.length)
@@ -308,69 +269,20 @@ public class PanelJeu extends JPanel implements ActionListener
 		}
 	}
 
-	public void actionPerformed(ActionEvent e)
-	{
-		if (e.getSource() == this.btnImporter)
-		{
-			importerSauvegarde();
-		}
-		if (e.getSource() == this.btnCreerNouveau)
-		{
-			creerNouveauPlateau();
-		}
-		if (e.getSource() == this.btnSauvegarder)
-		{
-			sauvegarderPlateau();
-		}
-	}
-
-	private void creerNouveauPlateau()
-	{
-		new FrameConfiguration(this.ctrl);
-		this.frame.dispose();
-	}
-
-	private void importerSauvegarde()
-	{
-		Object selectedItem = this.comboFichiersImport.getSelectedItem();
-		if (selectedItem == null)
-		{
-			System.out.println("Aucune sauvegarde sélectionnée.");
-			return;
-		}
-
-		String nomFichier = selectedItem.toString();
-		File file = new File("sauvegarde", nomFichier);
-		if (!file.exists())
-		{
-			System.out.println("Le fichier sauvegarde/" + file.getName() + " n'existe pas.");
-			return;
-		}
-
-		chargerApercu(file);
-	}
-
-	private void chargerApercu(File file)
+	public void chargerApercu(File file)
 	{
 		if (this.ctrl.chargerPlateau(file))
 		{
 			this.fichierCharge = file;
-
-			// Mise à jour de la configuration via le contrôleur (métier)
 			this.ctrl.mettreAJourConfigurationDepuisPlateau();
 
-			// Mettre à jour l'affichage gauche
-			int nbJoueurs = this.ctrl.getNbJoueurs();
-			int nbStations = this.ctrl.getNbStations();
-
-			this.lblJoueurs.setText("Nombre de joueurs : " + nbJoueurs);
-			this.lblStations.setText("Nombre de stations : " + nbStations);
+			this.lblJoueurs.setText("Nombre de joueurs : " + this.ctrl.getNbJoueurs());
+			this.lblStations.setText("Nombre de stations : " + this.ctrl.getNbStations());
 			this.lblAretes.setText("Nombre d'arêtes : " + this.ctrl.getNbAretes());
 
 			mettreAJourComboPlacement();
 			this.btnSauvegarder.setEnabled(true);
 
-			// Vider et reconstruire la grille
 			this.panelApercuGrille.removeAll();
 			int largeur = this.ctrl.getLargeur();
 			int hauteur = this.ctrl.getHauteur();
@@ -380,212 +292,45 @@ public class PanelJeu extends JPanel implements ActionListener
 			int size = largeur * hauteur;
 			for (int i = 0; i < size; i++)
 			{
-				CasePanel cell = new CasePanel(i);
-				this.panelApercuGrille.add(cell);
+				this.panelApercuGrille.add(new CasePanel(i, this.ctrl, this));
 			}
 
 			this.lblApercuTitre.setText("Plateau : " + file.getName());
-			this.lblApercuTitre.setFont(new Font("Arial", Font.BOLD, 14));
-
 			this.panelApercuGrille.revalidate();
 			this.panelApercuGrille.repaint();
 			this.frame.pack();
 			this.frame.setLocationRelativeTo(null);
 		}
-		else
-		{
-			System.out.println("Erreur lors de la lecture ou de l'analyse du fichier.");
-		}
 	}
 
-	private void sauvegarderPlateau()
+	public void caseCliquee(int index)
 	{
-		if (this.fichierCharge != null)
+		String mode = "STATION";
+		Object selection = this.comboStation.getSelectedItem();
+		if (this.rbDepart.isSelected())
 		{
-			// Validation métier déléguée au contrôleur
-			if (!this.ctrl.validerDepartsPlateau())
-			{
-				return;
-			}
-
-			if (this.ctrl.enregistrerPlateau(this.fichierCharge.getName()))
-			{
-				System.out.println("Plateau sauvegardé avec succès et écrasé dans : " + this.fichierCharge.getAbsolutePath());
-				this.frame.dispose();
-			}
-			else
-			{
-				System.out.println("Erreur lors de l'enregistrement du plateau.");
-			}
-		}
-	}
-
-	private void caseCliquee(int index)
-	{
-		if (this.rbStation.isSelected())
-		{
-			Object selectedItem = this.comboStation.getSelectedItem();
-			if (selectedItem == null) return;
-			String selected = selectedItem.toString();
-			if (selected.equals("Aucun"))
-			{
-				this.ctrl.affecterStation(index, 0);
-			}
-			else
-			{
-				int stationNum = 0;
-				for (int i = 0; i < nomsStations.length; i++)
-				{
-					if (selected.equals(nomsStations[i]))
-					{
-						stationNum = i + 1;
-						break;
-					}
-				}
-
-				if (stationNum == 0 && selected.startsWith("Station "))
-				{
-					try
-					{
-						stationNum = Integer.parseInt(selected.substring(8));
-					}
-					catch (Exception ex) {}
-				}
-
-				this.ctrl.affecterStation(index, stationNum);
-			}
-		}
-		else if (this.rbDepart.isSelected())
-		{
-			Object selectedItem = this.comboDepart.getSelectedItem();
-			if (selectedItem == null) return;
-			String selected = selectedItem.toString();
-			if (selected.equals("Aucun"))
-			{
-				this.ctrl.affecterDepart(index, 0);
-			}
-			else if (selected.startsWith("Joueur "))
-			{
-				int numJoueur = Integer.parseInt(selected.substring(7));
-
-				// Garantir UNE et UNIQUE base de départ par joueur :
-				// Retirer tout autre case déjà affectée à ce joueur
-				int taille = this.ctrl.getLargeur() * this.ctrl.getHauteur();
-				for (int i = 0; i < taille; i++)
-				{
-					if (this.ctrl.getDepart(i) == numJoueur)
-					{
-						this.ctrl.affecterDepart(i, 0);
-					}
-				}
-
-				this.ctrl.affecterDepart(index, numJoueur);
-			}
+			mode = "DEPART";
+			selection = this.comboDepart.getSelectedItem();
 		}
 
-		// Recalculer les arêtes après modification
+		GestionnairePlacement.gererClic(index, mode, selection, this.ctrl);
+
 		this.ctrl.genererAretesAuto();
 		this.lblAretes.setText("Nombre d'arêtes : " + this.ctrl.getNbAretes());
 		this.panelApercuGrille.repaint();
 	}
 
-	private Image getImageStation(int stationNum)
+	public Image getImageStation(int stationNum)
 	{
 		if (stationNum < 1 || stationNum >= stationImages.length) return null;
 		if (stationImages[stationNum] == null)
 		{
-			String chemin = getCheminImageStation(stationNum);
+			String chemin = UtilitaireJeu.getCheminImageStation(stationNum);
 			if (chemin != null)
 			{
-				ImageIcon icon = new ImageIcon(chemin);
-				stationImages[stationNum] = icon.getImage();
+				stationImages[stationNum] = new ImageIcon(chemin).getImage();
 			}
 		}
 		return stationImages[stationNum];
-	}
-
-	private String getCheminImageStation(int stationNum)
-	{
-		String[] chemins = {
-			"plateau/images/" + stationNum + ".png",
-			"images/" + stationNum + ".png",
-			"../plateau/images/" + stationNum + ".png",
-			"../../plateau/images/" + stationNum + ".png"
-		};
-		for (String chemin : chemins)
-		{
-			java.io.File fichier = new java.io.File(chemin);
-			if (fichier.exists())
-			{
-				return fichier.getAbsolutePath();
-			}
-		}
-		return "plateau/images/" + stationNum + ".png";
-	}
-
-	/*------------------------*/
-	/* Panel Interne des cases*/
-	/*------------------------*/
-	private class CasePanel extends JPanel
-	{
-		private int index;
-
-		public CasePanel(int index)
-		{
-			this.index = index;
-			this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-			this.setPreferredSize(new Dimension(50, 50));
-			this.addMouseListener(new MouseAdapter()
-			{
-				public void mousePressed(MouseEvent e)
-				{
-					caseCliquee(CasePanel.this.index);
-				}
-			});
-		}
-
-		@Override
-		protected void paintComponent(Graphics g)
-		{
-			super.paintComponent(g);
-			int w = getWidth();
-			int h = getHeight();
-
-			// 1. Dessiner le fond (arrondissement)
-			int arr = ctrl.getArrondissement(index);
-			if (arr == 0)
-			{
-				g.setColor(Color.LIGHT_GRAY);
-			}
-			else if (arr > 0 && arr <= tabCouleurs.length)
-			{
-				g.setColor(tabCouleurs[arr - 1]);
-			}
-			else
-			{
-				g.setColor(Color.WHITE);
-			}
-			g.fillRect(0, 0, w, h);
-
-			// 2. Dessiner l'image de la Station
-			int station = ctrl.getStation(index);
-			if (station > 0)
-			{
-				Image img = getImageStation(station);
-				if (img != null)
-				{
-					g.drawImage(img, 2, 2, w - 4, h - 4, this);
-				}
-			}
-
-			// 3. Dessiner le départ du joueur
-			int depart = ctrl.getDepart(index);
-			if (depart > 0)
-			{
-				g.setColor(Color.BLACK);
-				g.setFont(new Font("Arial", Font.BOLD, 14));
-				g.drawString("D" + depart, 5, 18);
-			}
-		}
 	}
 }
