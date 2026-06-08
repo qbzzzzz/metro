@@ -1,6 +1,11 @@
 package plateau.ihm;
 
-import java.awt.*;
+import java.awt.Desktop;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.*;
 import javax.swing.*;
 import plateau.Controleur;
