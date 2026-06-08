@@ -4,11 +4,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-public class EcouteurJeu implements ActionListener
+public class ListenerJeu implements ActionListener
 {
 	private PanelJeu panel;
 
-	public EcouteurJeu(PanelJeu panel)
+	public ListenerJeu(PanelJeu panel)
 	{
 		this.panel = panel;
 	}

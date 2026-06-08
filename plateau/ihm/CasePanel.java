@@ -1,11 +1,10 @@
 package plateau.ihm;
 
-import plateau.Controleur;
-import plateau.metier.UtilitaireJeu;
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import plateau.Controleur;
+import plateau.metier.UtilitaireJeu;
 
 public class CasePanel extends JPanel
 {
