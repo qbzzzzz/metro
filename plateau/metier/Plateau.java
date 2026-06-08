@@ -2,26 +2,30 @@ package plateau.metier;
 
 public class Plateau
 {
-	private int largeur;
-	private int hauteur;
-	private int[] tabArrondissements;
-	private int[] tabStations;
-	private int[] tabDeparts;
+	private int		largeur;
+	private int 	hauteur;
+	
+	private int[] 	tabArrondissements;
+	private int[] 	tabStations;
+	private int[] 	tabDeparts;
+	
 	private GraphePlateau graphe;
 
 	public Plateau(int largeur, int hauteur)
 	{
 		this.largeur  = largeur;
 		this.hauteur  = hauteur;
-		int taille = largeur * hauteur;
+		int taille 	  = largeur * hauteur;
 		this.tabArrondissements = new int[taille];
-		this.tabStations = new int[taille];
-		this.tabDeparts = new int[taille];
-		this.graphe = new GraphePlateau(taille);
+		this.tabStations 		= new int[taille];
+		this.tabDeparts 		= new int[taille];
+		this.graphe 			= new GraphePlateau(taille);
 	}
 
 	public int getLargeur() { return this.largeur; }
+	
 	public int getHauteur() { return this.hauteur; }
+	
 	public GraphePlateau getGraphe() { return this.graphe; }
 
 	public int getArrondissement(int numCase)

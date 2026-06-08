@@ -45,9 +45,9 @@ public class UtilitaireJeu
 	public static String getCheminImageStation(int stationNum)
 	{
 		String[] chemins = {
-			"plateau/images/" + stationNum + ".png",
-			"images/" + stationNum + ".png",
-			"../plateau/images/" + stationNum + ".png",
+			"plateau/images/" 		+ stationNum + ".png",
+			"images/" + stationNum 	+ ".png",
+			"../plateau/images/" 	+ stationNum + ".png",
 			"../../plateau/images/" + stationNum + ".png"
 		};
 		for (String chemin : chemins)

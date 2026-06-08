@@ -5,9 +5,10 @@ public class ValidateurPlateau
 	public static boolean validerDeparts(Plateau plateau, int nbJoueurs)
 	{
 		int taille = plateau.getLargeur() * plateau.getHauteur();
+		
 		for (int p = 1; p <= nbJoueurs; p++)
 		{
-			int compteur = 0;
+			int compteur = 0;	
 			for (int i = 0; i < taille; i++)
 			{
 				if (plateau.getDepart(i) == p)
