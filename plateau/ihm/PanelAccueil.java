@@ -8,14 +8,14 @@ import plateau.Controleur;
 
 public class PanelAccueil extends JPanel implements ActionListener
 {
-    private JButton btnConfiguration;
-    private JButton btnRegles;
+    private JButton             btnConfiguration;
+    private JButton             btnRegles;
 
     private FrameAccueil        frmAccueil;
     private FrameConfiguration  frmConfiguration;
     private Controleur          ctrl;
 
-    private Image imgFond;
+    private Image               imgFond;
 
     public PanelAccueil(FrameAccueil frmAccueil, Controleur ctrl)
     {
@@ -66,19 +66,10 @@ public class PanelAccueil extends JPanel implements ActionListener
         {
             try
             {
-                // Tenter de trouver le PDF des règles ou du sujet de la SAE
-                String[] cheminsRegles = {
-                    "Règle les Cartographes du Métro.pdf",
-                    "../Règle les Cartographes du Métro.pdf",
-                    "../sae/Projet_1 Exercice 1.pdf",
-                    "../sae/Projet_1 Exercice 2.pdf",
-                    "../sae/Projet_2 Exercice 1.pdf",
-                    "../sae/Projet_2 Exercice 2.pdf",
-                    "../ppp.pdf"
-                };
+                String[] cheminRegles = {"../Règle les Cartographes du Métro.pdf"};
 
                 java.io.File fichierPdf = null;
-                for (String ch : cheminsRegles)
+                for (String ch : cheminRegles)
                 {
                     java.io.File testFichier = new java.io.File(ch);
                     if (testFichier.exists())
@@ -94,7 +85,7 @@ public class PanelAccueil extends JPanel implements ActionListener
                 }
                 else
                 {
-                    System.out.println("Fichier regles_du_jeu.pdf introuvable.");
+                    System.out.println("Règles du jeu introuvable.");
                 }
             }
             catch (Exception ex)
