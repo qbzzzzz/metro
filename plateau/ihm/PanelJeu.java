@@ -294,11 +294,40 @@ public class PanelJeu extends JPanel
 				this.panelApercuGrille.add(new CasePanel(i, this.ctrl, this));
 			}
 
+			// Restauration de l'état normal du titre
 			this.lblApercuTitre.setText("Plateau : " + file.getName());
+			this.lblApercuTitre.setFont(new Font("Arial", Font.BOLD, 14));
+			this.lblApercuTitre.setForeground(Color.BLACK); 
+
 			this.panelApercuGrille.revalidate();
 			this.panelApercuGrille.repaint();
 			this.frame.pack();
 			this.frame.setLocationRelativeTo(null);
+		}
+		else
+		{
+			// ERREUR GÉRÉE SANS JOPTIONPANE : Modification visuelle directe
+			this.lblApercuTitre.setText("ÉCHEC DE CHARGEMENT");
+			this.lblApercuTitre.setFont(new Font("Arial", Font.BOLD, 14));
+			this.lblApercuTitre.setForeground(Color.RED); // Titre passe en rouge anonyme
+
+			this.panelApercuGrille.removeAll();
+			this.panelApercuGrille.setLayout(new GridBagLayout());
+			this.panelApercuGrille.setBackground(new Color(255, 230, 230)); // Fond d'aperçu légèrement rosé
+
+			JLabel lblErreur = new JLabel("<html><center><font color='red'><b>Plateau invalide !</b></font><br><br>"
+					+ "Le fichier <b>" + file.getName() + "</b> n'a pas pu être chargé car il contient<br>"
+					+ "des structures d'arêtes invalides ou des valeurs hors-bornes.</center></html>");
+			lblErreur.setFont(new Font("Arial", Font.PLAIN, 13));
+			
+			this.panelApercuGrille.add(lblErreur);
+			
+			// Désactivation des fonctionnalités d'édition pour le fichier cassé
+			this.btnSauvegarder.setEnabled(false);
+			this.fichierCharge = null;
+
+			this.panelApercuGrille.revalidate();
+			this.panelApercuGrille.repaint();
 		}
 	}
 
