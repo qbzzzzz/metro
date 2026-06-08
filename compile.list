@@ -2,7 +2,7 @@
 ./plateau/metier/Plateau.java
 ./plateau/metier/GraphePlateau.java
 ./plateau/metier/ChargeurPlateau.java
-./plateau/metier/ListenerPlateau.java
+./plateau/metier/EnregistreurPlateau.java
 ./plateau/metier/ValidateurPlateau.java
 ./plateau/metier/ConfigurationPlateau.java
 ./plateau/metier/UtilitaireJeu.java
