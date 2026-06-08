@@ -279,7 +279,7 @@ public class PanelJeu extends JPanel
         for (int i = 1; i <= nbStations; i++)
         {
             if (i <= nomsStations.length) { this.comboStation.addItem(nomsStations[i - 1]); }
-            else                         { this.comboStation.addItem("Station " + i); }
+            else                         { 	this.comboStation.addItem("Station " + i); }
         }
 
         this.comboDepart.removeAllItems();
@@ -299,51 +299,12 @@ public class PanelJeu extends JPanel
             this.fichierCharge = file;
             this.ctrl.mettreAJourConfigurationDepuisPlateau();
 
-            this.lblJoueurs.setText("Nombre de joueurs : " + this.ctrl.getNbJoueurs());
-            this.lblStations.setText("Nombre de stations : " + this.ctrl.getNbStations());
-            this.lblAretes.setText("Nombre d'arêtes : " + this.ctrl.getNbAretes());
+            this.lblJoueurs	.setText("Nombre de joueurs : " 	+ this.ctrl.getNbJoueurs());
+            this.lblStations.setText("Nombre de stations : " 	+ this.ctrl.getNbStations());
+            this.lblAretes	.setText("Nombre d'arêtes : " 		+ this.ctrl.getNbAretes());
 
-<<<<<<< HEAD
             mettreAJourComboPlacement();
             this.btnSauvegarder.setEnabled(true);
-=======
-			// Restauration de l'état normal du titre
-			this.lblApercuTitre.setText("Plateau : " + file.getName());
-			this.lblApercuTitre.setFont(new Font("Arial", Font.BOLD, 14));
-			this.lblApercuTitre.setForeground(Color.BLACK); 
-
-			this.panelApercuGrille.revalidate();
-			this.panelApercuGrille.repaint();
-			this.frame.pack();
-			this.frame.setLocationRelativeTo(null);
-		}
-		else
-		{
-			// ERREUR GÉRÉE SANS JOPTIONPANE : Modification visuelle directe
-			this.lblApercuTitre.setText("ÉCHEC DE CHARGEMENT");
-			this.lblApercuTitre.setFont(new Font("Arial", Font.BOLD, 14));
-			this.lblApercuTitre.setForeground(Color.RED); // Titre passe en rouge anonyme
-
-			this.panelApercuGrille.removeAll();
-			this.panelApercuGrille.setLayout(new GridBagLayout());
-			this.panelApercuGrille.setBackground(new Color(255, 230, 230)); // Fond d'aperçu légèrement rosé
-
-			JLabel lblErreur = new JLabel("<html><center><font color='red'><b>Plateau invalide !</b></font><br><br>"
-					+ "Le fichier <b>" + file.getName() + "</b> n'a pas pu être chargé car il contient<br>"
-					+ "des structures d'arêtes invalides ou des valeurs hors-bornes.</center></html>");
-			lblErreur.setFont(new Font("Arial", Font.PLAIN, 13));
-			
-			this.panelApercuGrille.add(lblErreur);
-			
-			// Désactivation des fonctionnalités d'édition pour le fichier cassé
-			this.btnSauvegarder.setEnabled(false);
-			this.fichierCharge = null;
-
-			this.panelApercuGrille.revalidate();
-			this.panelApercuGrille.repaint();
-		}
-	}
->>>>>>> c1468bb35b9ff0c1afc190defa18b4d813669fff
 
             this.panelApercuGrille.removeAll();
             int largeur = this.ctrl.getLargeur();
