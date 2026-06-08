@@ -6,8 +6,10 @@ import javax.swing.*;
 
 import plateau.Controleur;
 
+// Panneau de l'écran d'accueil contenant les boutons principaux et une image de fond
 public class PanelAccueil extends JPanel implements ActionListener
 {
+    // Attributs : Composants graphiques, références des fenêtres et image de fond
     private JButton             btnConfiguration;
     private JButton             btnRegles;
 
@@ -17,51 +19,54 @@ public class PanelAccueil extends JPanel implements ActionListener
 
     private Image               imgFond;
 
+    // Constructeur : Initialise le fond, crée les boutons et les centre à l'écran
     public PanelAccueil(FrameAccueil frmAccueil, Controleur ctrl)
     {
         this.frmAccueil = frmAccueil;
         this.ctrl       = ctrl;
 
+        // Chargement de l'image de fond et définition de la taille (800x600)
         this.imgFond = new ImageIcon( this.ctrl.getImageFond() ).getImage();
         this.setPreferredSize(new Dimension(800, 600));
 
         /*-------------------------*/
         /* Création des composants */
         /*-------------------------*/
-
         this.btnConfiguration = new JButton("Configuration du plateau");
         this.btnRegles        = new JButton("Règles");
 
         /*-------------------------------*/
         /* Positionnement des composants */
         /*-------------------------------*/
+        this.setLayout(new GridBagLayout()); // GridBagLayout utilisé pour centrer automatiquement le contenu
 
-        this.setLayout(new GridBagLayout());
-
+        // Regroupement des boutons dans une grille verticale transparente (2 lignes, 1 colonne)
         JPanel panelBoutons = new JPanel(new GridLayout(2, 1, 10, 10));
         panelBoutons.setOpaque(false);
 
         panelBoutons.add(this.btnConfiguration);
         panelBoutons.add(this.btnRegles);
 
-        this.add(panelBoutons);
+        this.add(panelBoutons); // Ajout du bloc de boutons au centre du panneau principal
 
         /*---------------------------*/
         /* Activation des composants */
         /*---------------------------*/
-
         this.btnConfiguration.addActionListener(this);
         this.btnRegles       .addActionListener(this);
     }
 
+    // Gestion des actions au clic sur les boutons
     public void actionPerformed(ActionEvent e)
     {
+        // 1. Action : Clic sur "Configuration du plateau" -> Ouvre l'écran de config et cache l'accueil
         if (e.getSource() == this.btnConfiguration)
         {
             this.frmConfiguration = new FrameConfiguration(this.ctrl);
             this.frmAccueil         .setVisible(false);
             this.frmConfiguration   .setVisible(true);
         }
+        // 2. Action : Clic sur "Règles" -> Cherche le fichier PDF local et l'ouvre avec le lecteur par défaut
         else if (e.getSource() == this.btnRegles)
         {
             try
@@ -79,6 +84,7 @@ public class PanelAccueil extends JPanel implements ActionListener
                     }
                 }
 
+                // Si le fichier existe et que le système le permet, ouverture du PDF
                 if (fichierPdf != null && java.awt.Desktop.isDesktopSupported())
                 {
                     java.awt.Desktop.getDesktop().open(fichierPdf);
@@ -95,6 +101,7 @@ public class PanelAccueil extends JPanel implements ActionListener
         }
     }
 
+    // Dessin du composant : Permet d'étirer l'image de fond sur toute la surface de l'écran
     protected void paintComponent(Graphics g)
     {
         super.paintComponent(g);
