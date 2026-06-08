@@ -157,21 +157,22 @@ public class PanelConfiguration extends JPanel implements ActionListener
     }
 
     // Traitement des actions au clic
+    // Traitement des actions au clic
     public void actionPerformed(ActionEvent e)
     {
         // Action 1 : Validation du formulaire
         if (e.getSource() == this.btnValider)
         {
             // Vérification de présence des données
-            if (txtLargeur.getText().isEmpty() 			|| 
-				txtHauteur.getText().isEmpty() 			|| 
-				txtJoueurs.getText().isEmpty() 			|| 
-				txtStation.getText().isEmpty() 			|| 
-				txtArrondissments.getText().isEmpty() 	|| 
-				txtTailleCases.getText().isEmpty())
+            if (txtLargeur.getText().isEmpty()          || 
+                txtHauteur.getText().isEmpty()          || 
+                txtJoueurs.getText().isEmpty()          || 
+                txtStation.getText().isEmpty()          || 
+                txtArrondissments.getText().isEmpty()   || 
+                txtTailleCases.getText().isEmpty())
             {
                 System.out.println("Veuillez remplir tous les champs.");
-                return;
+                return; // Bloque l'exécution ici
             }
 
             try
@@ -185,14 +186,32 @@ public class PanelConfiguration extends JPanel implements ActionListener
                 int tailleCases         = Integer.parseInt(txtTailleCases   .getText());
 
                 // Batterie de tests de cohérence des données saisies (limites max et min)
-                if (nbStations > 6) 																				{ System.out.println("Le nombre de types de station ne peut pas dépasser 6."); }
-                if (nbJoueurs > 4)  																				{ System.out.println("Le nombre de joueurs ne peut pas dépasser 4."); }
-                if (nbArrondissements > 20) 																		{ System.out.println("Le nombre d'arrondissements ne peut pas dépasser 20."); }
-                if (largeur <= 0 || hauteur <= 0 || nbJoueurs <= 0 || nbStations <= 0 || nbArrondissements <= 0) 	{ System.out.println("Veuillez entrer des valeurs positives."); }
-                if (largeur < nbJoueurs) 																			{ System.out.println("La largeur doit être cohérente avec le nombre de joueurs."); }
-                if (hauteur < nbJoueurs) 																			{ System.out.println("La hauteur doit être cohérente avec le nombre de joueurs."); }
+                if (nbStations > 6) { 
+                    System.out.println("Le nombre de types de station ne peut pas dépasser 6."); 
+                    return; 
+                }
+                if (nbJoueurs > 4) { 
+                    System.out.println("Le nombre de joueurs ne peut pas dépasser 4."); 
+                    return; 
+                }
+                if (nbArrondissements > 20) { 
+                    System.out.println("Le nombre d'arrondissements ne peut pas dépasser 20."); 
+                    return; 
+                }
+                if (largeur <= 0 || hauteur <= 0 || nbJoueurs <= 0 || nbStations <= 0 || nbArrondissements <= 0) { 
+                    System.out.println("Veuillez entrer des valeurs positives."); 
+                    return; 
+                }
+                if (largeur < nbJoueurs) { 
+                    System.out.println("La largeur doit être cohérente avec le nombre de joueurs."); 
+                    return; 
+                }
+                if (hauteur < nbJoueurs) { 
+                    System.out.println("La hauteur doit être cohérente avec le nombre de joueurs."); 
+                    return; 
+                }
 
-                // Initialisation du modèle via le contrôleur, fermeture de la config et ouverture de l'écran de création du plateau
+                // Initialisation du modèle via le contrôleur (uniquement si aucun 'return' n'a été déclenché)
                 this.ctrl               .initialiserPlateau(largeur, hauteur);
                 this.ctrl               .setConfigJeu(nbJoueurs, nbStations);
                 this.frmCreation        = new FrameCreation(this.ctrl);
