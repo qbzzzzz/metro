@@ -15,10 +15,12 @@ public class ListenerJeu implements ActionListener
     }
 
     // Méthode déclenchée automatiquement à chaque clic sur un bouton connecté
+	
     public void actionPerformed(ActionEvent e)
     {
         // 1. Action : Clic sur le bouton "Importer"
         // Récupère le fichier sélectionné dans la liste déroulante et charge son aperçu s'il existe
+
         if (e.getSource() == panel.getBtnImporter())
         {
             Object selectedItem = panel.getComboFichiersImport().getSelectedItem();
@@ -31,6 +33,7 @@ public class ListenerJeu implements ActionListener
         
         // 2. Action : Clic sur le bouton "Créer Nouveau"
         // Ouvre la fenêtre de configuration et ferme (détruit) la fenêtre actuelle du jeu
+
         if (e.getSource() == panel.getBtnCreerNouveau())
         {
             new FrameConfiguration(panel.getCtrl());
@@ -39,6 +42,7 @@ public class ListenerJeu implements ActionListener
         
         // 3. Action : Clic sur le bouton "Sauvegarder"
         // Si un fichier est chargé, valide les points de départ via le contrôleur, enregistre et ferme la fenêtre
+
         if (e.getSource() == panel.getBtnSauvegarder() && panel.getFichierCharge() != null)
         {
             if (panel.getCtrl().validerDepartsPlateau())

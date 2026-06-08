@@ -15,10 +15,13 @@ public class Plateau
 	{
 		this.largeur  = largeur;
 		this.hauteur  = hauteur;
+
 		int taille 	  = largeur * hauteur;
+
 		this.tabArrondissements = new int[taille];
 		this.tabStations 		= new int[taille];
 		this.tabDeparts 		= new int[taille];
+		
 		this.graphe 			= new GraphePlateau(taille);
 	}
 

@@ -3,7 +3,6 @@ package plateau.ihm;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-
 import plateau.Controleur;
 
 // Formulaire permettant de configurer les paramètres de création d'une nouvelle partie
@@ -50,7 +49,9 @@ public class PanelConfiguration extends JPanel implements ActionListener
         this.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
 
         // Création de la grille du formulaire (7 lignes, 2 colonnes)
+
         this.panelConfiguration = new JPanel(new GridLayout(7, 2, 10, 10));
+        
         this.panelConfiguration.setOpaque(false);
         this.setOpaque(false);
 
@@ -60,39 +61,52 @@ public class PanelConfiguration extends JPanel implements ActionListener
         Font labelFont = new Font("Arial", Font.BOLD, 13);
 
         this.lblLargeur = new JLabel("Taille en largeur :");
+
         this.lblLargeur .setForeground(Color.WHITE);
         this.lblLargeur .setFont(labelFont);
+
         txtLargeur      = new JTextField(5);
 
         this.lblHauteur = new JLabel("Taille en hauteur :");
+
         this.lblHauteur .setForeground(Color.WHITE);
         this.lblHauteur .setFont(labelFont);
+
         txtHauteur      = new JTextField(5);
 
         this.lblJoueurs = new JLabel("Nombre de joueurs (max 4) :");
+
         this.lblJoueurs .setForeground(Color.WHITE);
         this.lblJoueurs .setFont(labelFont);
+
         txtJoueurs      = new JTextField(5);
 
         this.lblStation = new JLabel("Nombre de types de station (max 6) :");
+
         this.lblStation .setForeground(Color.WHITE);
         this.lblStation .setFont(labelFont);
+
         txtStation      = new JTextField(5);
 
         this.lblArrondissments = new JLabel("Nombre d'arrondissements (max 20) :");
+
         this.lblArrondissments  .setForeground(Color.WHITE);
         this.lblArrondissments  .setFont(labelFont);
+
         txtArrondissments       = new JTextField(5);
 
         this.lblTailleCases = new JLabel("Taille des cases :");
+
         this.lblTailleCases .setForeground(Color.WHITE);
         this.lblTailleCases .setFont(labelFont);
+
         txtTailleCases      = new JTextField(5);
 
         this.btnValider = new JButton("Valider");
         this.btnAnnuler = new JButton("Annuler");
 
         // Insertion des composants (Label à gauche, Champ de saisie ajusté à droite)
+
         this.panelConfiguration.add(this.lblLargeur);
         this.panelConfiguration.add(creerPanelAjuste(txtLargeur));
 
@@ -178,6 +192,7 @@ public class PanelConfiguration extends JPanel implements ActionListener
             try
             {
                 // Conversion des textes en entiers
+
                 int largeur             = Integer.parseInt(txtLargeur       .getText());
                 int hauteur             = Integer.parseInt(txtHauteur       .getText());
                 int nbJoueurs           = Integer.parseInt(txtJoueurs       .getText());
@@ -212,8 +227,10 @@ public class PanelConfiguration extends JPanel implements ActionListener
                 }
 
                 // Initialisation du modèle via le contrôleur (uniquement si aucun 'return' n'a été déclenché)
-                this.ctrl               .initialiserPlateau(largeur, hauteur);
-                this.ctrl               .setConfigJeu(nbJoueurs, nbStations);
+                
+                this.ctrl.initialiserPlateau(largeur, hauteur);
+                this.ctrl.setConfigJeu(nbJoueurs, nbStations);
+
                 this.frmCreation        = new FrameCreation(this.ctrl);
 
                 this.frmConfiguration   .setVisible(false);

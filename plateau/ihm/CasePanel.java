@@ -44,6 +44,7 @@ public class CasePanel extends JPanel
     protected void paintComponent(Graphics g)
     {
         super.paintComponent(g);
+
         int w = getWidth();
         int h = getHeight();
         
@@ -63,6 +64,7 @@ public class CasePanel extends JPanel
         }
 
         // 3. Affichage du texte de départ (ex: "D1") si la case est un point de départ
+		
         int depart = ctrl.getDepart(index);
         if (depart > 0)
         {
