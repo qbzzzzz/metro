@@ -16,4 +16,4 @@
 ./plateau/ihm/PanelCreation.java
 ./plateau/ihm/PanelJeu.java
 ./plateau/ihm/CasePanel.java
-./plateau/ihm/EcouteurJeu.java
+./plateau/ihm/ListenerJeu.java

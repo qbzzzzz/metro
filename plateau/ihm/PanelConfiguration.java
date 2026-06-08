@@ -116,12 +116,12 @@ public class PanelConfiguration extends JPanel implements ActionListener
         this.panelConfiguration.add(this.btnValider);
 
         // Remplissage automatique des valeurs par défaut pour les tests
-        this.txtLargeur.setText("7");
+        /*this.txtLargeur.setText("7");
         this.txtHauteur.setText("7");
         this.txtJoueurs.setText("4");                   
         this.txtStation.setText("4");
         this.txtArrondissments.setText("10");
-        this.txtTailleCases.setText("80");
+        this.txtTailleCases.setText("80");*/
 
         /*-------------------------------*/
         /* Positionnement des composants */

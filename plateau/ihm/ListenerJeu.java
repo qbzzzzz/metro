@@ -34,7 +34,7 @@ public class ListenerJeu implements ActionListener
         if (e.getSource() == panel.getBtnCreerNouveau())
         {
             new FrameConfiguration(panel.getCtrl());
-            panel.getFrame().dispose();
+            panel.getFrame().setVisible(false);
         }
         
         // 3. Action : Clic sur le bouton "Sauvegarder"
@@ -45,7 +45,7 @@ public class ListenerJeu implements ActionListener
             {
                 if (panel.getCtrl().enregistrerPlateau(panel.getFichierCharge().getName()))
                 {
-                    panel.getFrame().dispose();
+                    panel.getFrame().setVisible(false);
                 }
             }
         }
