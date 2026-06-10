@@ -15,7 +15,18 @@ public class EnregistreurPlateau
 			File dossier = new File("sauvegarde");
 			if (!dossier.exists()) dossier.mkdirs();
 
-			File fichier = new File(dossier, nomFichier.endsWith(".txt") ? nomFichier : nomFichier + ".txt");
+			// 1. On prépare la variable pour le nom du fichier
+			String nomComplet = nomFichier;
+
+			// 2. Si le nom ne finit pas par ".txt", on lui ajoute l'extension
+			if (!nomFichier.endsWith(".txt")) 
+			{
+				nomComplet = nomFichier + ".txt";
+			}
+
+			// 3. On crée le fichier avec le bon nom
+			
+			File fichier = new File(dossier, nomComplet);
 			PrintWriter pw = new PrintWriter(new FileOutputStream(fichier));
 
 			pw.println(plateau.getLargeur() + ";" + plateau.getHauteur());

@@ -17,8 +17,9 @@ public class GestionnairePlacement
 			}
 			else
 			{
-				int stationNum = 0;
-				String[] nomsStations = UtilitaireJeu.getNomsStations();
+				int 		stationNum = 0;
+				String[] 	nomsStations = UtilitaireJeu.getNomsStations();
+				
 				for (int i = 0; i < nomsStations.length; i++)
 				{
 					if (selected.equals(nomsStations[i])) stationNum = i + 1;
@@ -38,8 +39,8 @@ public class GestionnairePlacement
 			}
 			else if (selected.startsWith("Joueur "))
 			{
-				int numJoueur = Integer.parseInt(selected.substring(7));
-				int taille = ctrl.getLargeur() * ctrl.getHauteur();
+				int numJoueur 	= Integer.parseInt(selected.substring(7));
+				int taille 		= ctrl.getLargeur() * ctrl.getHauteur();
 				for (int i = 0; i < taille; i++)
 				{
 					if (ctrl.getDepart(i) == numJoueur) ctrl.affecterDepart(i, 0);

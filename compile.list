@@ -1,4 +1,5 @@
 ./plateau/Controleur.java
+
 ./plateau/metier/Plateau.java
 ./plateau/metier/GraphePlateau.java
 ./plateau/metier/ChargeurPlateau.java
@@ -7,6 +8,7 @@
 ./plateau/metier/ConfigurationPlateau.java
 ./plateau/metier/UtilitaireJeu.java
 ./plateau/metier/GestionnairePlacement.java
+
 ./plateau/ihm/FrameAccueil.java
 ./plateau/ihm/FrameConfiguration.java
 ./plateau/ihm/FrameCreation.java
@@ -16,4 +18,4 @@
 ./plateau/ihm/PanelCreation.java
 ./plateau/ihm/PanelJeu.java
 ./plateau/ihm/CasePanel.java
-./plateau/ihm/EcouteurJeu.java
+./plateau/ihm/ListenerJeu.java
