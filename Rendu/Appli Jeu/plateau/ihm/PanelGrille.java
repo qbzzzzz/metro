@@ -88,6 +88,8 @@ public class PanelGrille extends JPanel
 			}
 		}
 
+		// Couleur du tracé = couleur de CE joueur pour la manche en cours
+		// (les couleurs tournent entre les joueurs à chaque manche)
 		Color couleur = this.ctrl.getCouleurJoueur(this.numeroJoueur);
 
 		// --- 3. Ligne du réseau de CE joueur (dans l'ordre de pose) ---
@@ -110,9 +112,8 @@ public class PanelGrille extends JPanel
 			g2d.drawLine(x1, y1, x2, y2);
 		}
 
-		// --- 4. Stations, départs (texte noir) et surbrillance des coups valides ---
+		// --- 4. Stations et surbrillance des coups valides ---
 		ArrayList<Integer> valides = this.ctrl.getCasesValides(this.numeroJoueur);
-		int fontSize = Math.max(9, Math.min(cellH / 3, 14));
 
 		for (int i = 0; i < taille; i++)
 		{
@@ -127,19 +128,22 @@ public class PanelGrille extends JPanel
 					g.drawImage(img, x + 3, y + 3, cellW - 6, cellH - 6, this);
 			}
 
-			int depart = this.ctrl.getDepart(i);
-			if (depart > 0)
-			{
-				g.setColor(Color.BLACK);
-				g.setFont(new Font("Arial", Font.BOLD, fontSize));
-				g.drawString("D" + depart, x + 3, y + fontSize + 2);
-			}
-
 			if (valides.contains(i))
 			{
 				g.setColor(new Color(255, 255, 0, 120));
 				g.fillRect(x, y, cellW, cellH);
 			}
+		}
+
+		// --- 5. MON départ uniquement (un rond de ma couleur) ---
+		int caseDepart = this.ctrl.getCaseDepart(this.numeroJoueur);
+		if (caseDepart >= 0)
+		{
+			int xd = (caseDepart % largeur) * cellW;
+			int yd = (caseDepart / largeur) * cellH;
+			g2d.setStroke(new BasicStroke(3));
+			g2d.setColor(couleur);
+			g2d.drawOval(xd + 4, yd + 4, cellW - 8, cellH - 8);
 		}
 	}
 }

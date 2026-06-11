@@ -16,10 +16,12 @@ public class ValidateurMouvement
 		// 3. La case ne doit pas être déjà dans le réseau du joueur
 		if (joueur.getReseau().contient(numCase)) return false;
 
-		// 4. La case doit être voisine de la DERNIÈRE station posée (on prolonge la ligne par son bout)
+		// 4. La case doit être voisine de l'UNE DES DEUX extrémités du tracé
+		int premiere = joueur.getReseau().getPremiereStation();
 		int derniere = joueur.getReseau().getDerniereStation();
-		if (derniere == -1) return false;
-		return plateau.getGraphe().aArete(derniere, numCase);
+		if (premiere == -1) return false;
+		return plateau.getGraphe().aArete(derniere, numCase)
+			|| plateau.getGraphe().aArete(premiere, numCase);
 	}
 
 	public static ArrayList<Integer> getCasesValides(Joueur joueur, Carte carte, Plateau plateau)

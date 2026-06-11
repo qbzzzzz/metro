@@ -39,6 +39,16 @@ public class PanelCarte extends JPanel
 			return;
 		}
 
+		// --- Image de la carte (claire/foncée) si disponible ---
+		Image imgCarte = this.ctrl.getImageCarte(carte);
+		if (imgCarte != null)
+		{
+			g.drawImage(imgCarte, 5, 5, w - 10, h - 10, this);
+			return;
+		}
+
+		// --- Sinon, repli sur le dessin vectoriel ---
+
 		// --- Fond de la carte ---
 		if (carte.estFoncee()) g.setColor(new Color(30, 30, 70));
 		else                   g.setColor(new Color(240, 240, 255));

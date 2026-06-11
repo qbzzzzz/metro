@@ -20,6 +20,8 @@ public class PanelChargement extends JPanel implements ActionListener
     private JRadioButton        rbLocal;
     private JRadioButton        rbMulti;
 
+    private JTextField          txtManches;
+
     private JButton             btnCharger;
     private JButton             btnRetour;
     private JLabel              lblStatut;
@@ -82,6 +84,14 @@ public class PanelChargement extends JPanel implements ActionListener
         groupeMode.add(this.rbLocal);
         groupeMode.add(this.rbMulti);
 
+        // Nombre de manches (zone de texte)
+        JLabel lblManches = new JLabel("Nombre de manches :");
+        lblManches.setForeground(Color.WHITE);
+        lblManches.setFont(labelFont);
+
+        this.txtManches = new JTextField("1", 3);
+        this.txtManches.setFont(labelFont);
+
         this.lblStatut = new JLabel(" ");
         this.lblStatut.setForeground(new Color(255, 100, 100));
         this.lblStatut.setFont(labelFont);
@@ -101,19 +111,26 @@ public class PanelChargement extends JPanel implements ActionListener
         panelModes.add(this.rbLocal);
         panelModes.add(this.rbMulti);
 
+        // Bloc "Nombre de manches : [ ]" sur une ligne
+        JPanel panelManches = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        panelManches.setOpaque(false);
+        panelManches.add(lblManches);
+        panelManches.add(this.txtManches);
+
         // Bloc des boutons d'action
         JPanel panelBoutons = new JPanel(new GridLayout(1, 2, 10, 0));
         panelBoutons.setOpaque(false);
         panelBoutons.add(this.btnRetour);
         panelBoutons.add(this.btnCharger);
 
-        // Formulaire vertical : plateau, puis mode, puis statut, puis boutons
-        JPanel panelFormulaire = new JPanel(new GridLayout(6, 1, 10, 10));
+        // Formulaire vertical : plateau, mode, nb de manches, statut, boutons
+        JPanel panelFormulaire = new JPanel(new GridLayout(7, 1, 10, 10));
         panelFormulaire.setOpaque(false);
         panelFormulaire.add(lblTitre);
         panelFormulaire.add(this.comboFichiers);
         panelFormulaire.add(lblMode);
         panelFormulaire.add(panelModes);
+        panelFormulaire.add(panelManches);
         panelFormulaire.add(this.lblStatut);
         panelFormulaire.add(panelBoutons);
 
@@ -146,16 +163,33 @@ public class PanelChargement extends JPanel implements ActionListener
                     // Récupérer le mode coché sur la fenêtre
                     if (this.rbMulti.isSelected())
                     {
-                        this.ctrl.setMode("MULTIJOUEUR");
                         this.lblStatut.setForeground(new Color(255, 180, 80));
                         this.lblStatut.setText("Mode multijoueur (réseau) à venir.");
                         // TODO : lancer la partie en multijoueur via le réseau (étape ultérieure)
                     }
                     else
                     {
-                        this.ctrl.setMode("LOCAL");
+                        // Lire le nombre de manches saisi
+                        int nbManches;
+                        try
+                        {
+                            nbManches = Integer.parseInt(this.txtManches.getText().trim());
+                        }
+                        catch (NumberFormatException ex)
+                        {
+                            this.lblStatut.setForeground(new Color(255, 100, 100));
+                            this.lblStatut.setText("Nombre de manches invalide.");
+                            return;
+                        }
+                        if (nbManches < 1)
+                        {
+                            this.lblStatut.setForeground(new Color(255, 100, 100));
+                            this.lblStatut.setText("Le nombre de manches doit être au moins 1.");
+                            return;
+                        }
+
                         // Lance la partie locale : une fenêtre par joueur, pioche commune
-                        this.ctrl.lancerPartieLocale();
+                        this.ctrl.lancerPartieLocale(nbManches);
                         this.frmChargement.setVisible(false);
                     }
                 }

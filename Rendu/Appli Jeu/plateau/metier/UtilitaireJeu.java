@@ -42,6 +42,28 @@ public class UtilitaireJeu
 		};
 	}
 
+	// Chemin de l'image d'une carte : "{numero}_claire.png" ou "{numero}_fonce.png".
+	// numero = type de station (1..6), ou 7 pour le joker. Renvoie null si introuvable.
+	public static String getCheminImageCarte(int numero, boolean foncee)
+	{
+		String suffixe = foncee ? "_fonce" : "_claire";
+		String[] chemins = {
+			"plateau/images/"       + numero + suffixe + ".png",
+			"images/"               + numero + suffixe + ".png",
+			"../plateau/images/"    + numero + suffixe + ".png",
+			"../../plateau/images/" + numero + suffixe + ".png"
+		};
+		for (String chemin : chemins)
+		{
+			File fichier = new File(chemin);
+			if (fichier.exists())
+			{
+				return fichier.getAbsolutePath();
+			}
+		}
+		return null;
+	}
+
 	public static String getCheminImageStation(int stationNum)
 	{
 		String[] chemins = {

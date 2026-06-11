@@ -3,100 +3,57 @@ package plateau;
 import plateau.ihm.FrameAccueil;
 import plateau.ihm.FrameInfos;
 import plateau.ihm.FrameJoueur;
+import plateau.ihm.FrameResultats;
 import plateau.metier.*;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+// Contrôleur du jeu : fait le lien entre l'IHM et la partie en cours.
 public class Controleur
 {
 	private FrameAccueil  ihm;
 	private Plateau       metier;
 
-	// Configuration de la partie
-	private int           nbJoueurs;
-	private int           nbStations;
-	private String        mode;        // "LOCAL" ou "MULTIJOUEUR"
-
 	// Partie en cours (mode local)
 	private Partie        partie;
 	private FrameJoueur[] framesJoueurs;
-	private FrameInfos    frameInfos;     // bande verticale centrale
+	private FrameInfos    frameInfos;
 	private boolean       resultatsAffiches;
 
-	// Couleurs des 4 joueurs (partagées entre IHM et contrôleur)
+	// Couleurs des joueurs. Elles tournent à chaque manche (la couleur du J2 passe au J1, etc.).
 	public static final Color[] COULEURS_JOUEURS = {
-		new Color(220,  50,  50),  // Joueur 1 rouge
-		new Color( 50, 100, 220),  // Joueur 2 bleu
-		new Color( 50, 180,  50),  // Joueur 3 vert
-		new Color(220, 140,   0)   // Joueur 4 orange
+		new Color(220,  50,  50),  // rouge
+		new Color( 50, 100, 220),  // bleu
+		new Color( 50, 180,  50),  // vert
+		new Color(220, 140,   0)   // orange
 	};
 
 	public Controleur()
 	{
 		this.metier = new Plateau(10, 10);
-		this.ihm    = new FrameAccueil ( this );
+		this.ihm    = new FrameAccueil(this);
 	}
-
-	/*-------------------------------------*/
-	/* Configuration de la partie          */
-	/*-------------------------------------*/
-	public void initialiserPlateau(int largeur, int hauteur)
-	{
-		this.metier = new Plateau(largeur, hauteur);
-	}
-
-	public void setConfigJeu(int nbJoueurs, int nbStations)
-	{
-		this.nbJoueurs  = nbJoueurs;
-		this.nbStations = nbStations;
-	}
-
-	public int getNbJoueurs()  { return this.partie != null ? this.partie.getNbJoueurs()  : this.nbJoueurs;  }
-
-	public int getNbStations() { return this.partie != null ? this.partie.getNbStations() : this.nbStations; }
-
-	public void   setMode(String mode) { this.mode = mode; }
-
-	public String getMode()            { return this.mode; }
 
 	/*-------------------------------------*/
 	/* Chargement d'un plateau             */
 	/*-------------------------------------*/
-	public boolean chargerPlateau(java.io.File fichier)
+	public boolean chargerPlateau(File fichier)
 	{
 		Plateau p = ChargeurPlateau.charger(fichier);
-		if (p != null)
-		{
-			this.metier = p;
-			return true;
-		}
+		if (p != null) { this.metier = p; return true; }
 		return false;
 	}
 
-	public void mettreAJourConfigurationDepuisPlateau()
-	{
-		int[] maxConfig = ConfigurationPlateau.detecterMaxJoueursEtStations(this.metier, this.nbJoueurs, this.nbStations);
-		this.setConfigJeu(maxConfig[0], maxConfig[1]);
-	}
-
-	public boolean validerDepartsPlateau()
-	{
-		return ValidateurPlateau.validerDeparts(this.metier, this.nbJoueurs);
-	}
-
-	public boolean enregistrerPlateau(String nomFichier)
-	{
-		return EnregistreurPlateau.enregistrer(this.metier, nomFichier);
-	}
-
-	// Renvoie la liste des plateaux (.txt) conçus dans l'Appli Conception.
-	public java.io.File[] getSauvegardes()
+	// Liste les plateaux (.txt) conçus dans l'Appli Conception.
+	public File[] getSauvegardes()
 	{
 		String[] chemins = {
 			"../Appli Conception/plateau/sauvegarde",
@@ -104,64 +61,56 @@ public class Controleur
 			"plateau/sauvegarde",
 			"sauvegarde"
 		};
-
 		for (String chemin : chemins)
 		{
-			java.io.File dir = new java.io.File(chemin);
+			File dir = new File(chemin);
 			if (dir.exists() && dir.isDirectory())
 			{
-				java.io.File[] liste = dir.listFiles();
+				ArrayList<File> txt = new ArrayList<File>();
+				File[] liste = dir.listFiles();
 				if (liste != null)
-				{
-					java.util.ArrayList<java.io.File> txt = new java.util.ArrayList<java.io.File>();
-					for (java.io.File f : liste)
-					{
-						if (f.isFile() && f.getName().endsWith(".txt"))
-						{
-							txt.add(f);
-						}
-					}
-					if (!txt.isEmpty()) return txt.toArray(new java.io.File[0]);
-				}
+					for (File f : liste)
+						if (f.isFile() && f.getName().endsWith(".txt")) txt.add(f);
+				if (!txt.isEmpty()) return txt.toArray(new File[0]);
 			}
 		}
-
-		return new java.io.File[0];
+		return new File[0];
 	}
 
-	// Vérifie que le plateau chargé est jouable (il possède au moins un départ et une station)
+	// Un plateau est jouable s'il a au moins un départ et une station.
 	public boolean plateauEstJouable()
 	{
-		this.setConfigJeu(0, 0);
-		this.mettreAJourConfigurationDepuisPlateau();
-		return this.nbJoueurs > 0 && this.nbStations > 0;
+		boolean aDepart  = false;
+		boolean aStation = false;
+		int taille = this.metier.getLargeur() * this.metier.getHauteur();
+		for (int i = 0; i < taille; i++)
+		{
+			if (this.metier.getDepart(i)  > 0) aDepart  = true;
+			if (this.metier.getStation(i) > 0) aStation = true;
+		}
+		return aDepart && aStation;
 	}
 
 	/*-------------------------------------*/
 	/* Partie en LOCAL                     */
 	/*-------------------------------------*/
-	// Démarre la partie locale : crée la partie (pioche commune), la bande d'infos centrale
-	// puis une fenêtre (plateau seul) par joueur, et place le tout à l'écran.
-	public void lancerPartieLocale()
+	// Crée la partie, la bande d'infos centrale, une fenêtre par joueur, et place le tout.
+	public void lancerPartieLocale(int nbManches)
 	{
-		this.partie            = new Partie(this.metier);
+		this.partie            = new Partie(this.metier, nbManches);
 		this.resultatsAffiches = false;
 
-		// Bande verticale centrale (carte commune + infos)
 		this.frameInfos = new FrameInfos(this);
 
-		// Une fenêtre par joueur (uniquement le plateau)
 		int nb = this.partie.getNbJoueurs();
 		this.framesJoueurs = new FrameJoueur[nb];
 		for (int i = 0; i < nb; i++)
-		{
 			this.framesJoueurs[i] = new FrameJoueur(this, i + 1);
-		}
 
 		placerFenetres();
 	}
 
-	// Place la bande d'infos au centre et les plateaux de part et d'autre (gauche / droite)
+	// Place la bande d'infos au centre et les plateaux de part et d'autre.
 	private void placerFenetres()
 	{
 		Dimension ecran = Toolkit.getDefaultToolkit().getScreenSize();
@@ -179,179 +128,189 @@ public class Controleur
 
 		for (int i = 0; i < nb; i++)
 		{
-			boolean gauche = (i % 2 == 0);            // pairs à gauche, impairs à droite
-			int rang = i / 2;
+			boolean gauche = (i % 2 == 0);
 			int x = gauche ? (bx - gap - boardW) : (bx + bandeW + gap);
-			int y = 20 + rang * (boardH + 15);
+			int y = 20 + (i / 2) * (boardH + 15);
 			if (x < 0) x = 0;
 			this.framesJoueurs[i].setBounds(x, y, boardW, boardH);
 		}
 	}
 
-	// Un joueur pose la carte commune sur une case. Retourne true si le coup est valide.
 	public boolean jouerCoup(int numeroJoueur, int numCase)
 	{
 		return this.partie != null && this.partie.jouerCoup(numeroJoueur, numCase);
 	}
 
-	// Un joueur passe son tour pour la carte commune
 	public void passerTour(int numeroJoueur)
 	{
 		if (this.partie != null) this.partie.passerTour(numeroJoueur);
 	}
 
-	// Rafraîchit TOUTES les fenêtres joueurs (les frames sont liées entre elles)
+	// Rafraîchit toutes les fenêtres, puis gère la fin de manche / de partie.
 	public void rafraichirTout()
 	{
-		if (this.frameInfos != null) this.frameInfos.rafraichir();
+		rafraichirFrames();
+		if (this.partie == null) return;
 
-		if (this.framesJoueurs != null)
+		if (this.partie.isEntreManche())
 		{
-			for (int i = 0; i < this.framesJoueurs.length; i++)
-			{
-				if (this.framesJoueurs[i] != null) this.framesJoueurs[i].rafraichir();
-			}
+			afficherScoresManche();
+			this.partie.continuerManche();
+			rafraichirFrames();
 		}
-
-		// Fin de partie (version simple) : message unique quand la pioche est épuisée
-		if (this.partie != null && this.partie.isPartieTerminee() && !this.resultatsAffiches)
+		else if (this.partie.isPartieTerminee() && !this.resultatsAffiches)
 		{
 			this.resultatsAffiches = true;
-			JOptionPane.showMessageDialog(null, "Manche terminée ! Toutes les cartes foncées ont été tirées.");
+			afficherScoresManche();
+			new FrameResultats(this);
 		}
 	}
 
-	// --- Accès à la partie (pour l'IHM de jeu) ---
-	public boolean            isPartieTerminee()                       { return this.partie != null && this.partie.isPartieTerminee(); }
-	public boolean            aJoue(int numeroJoueur)                  { return this.partie != null && this.partie.aJoue(numeroJoueur); }
-	public boolean            estSonTour(int numeroJoueur)             { return this.partie != null && this.partie.estSonTour(numeroJoueur); }
-	public int                getJoueurCourant()                       { return this.partie == null ? 0 : this.partie.getJoueurCourant(); }
-	public Carte              getCarteCourante()                       { return this.partie == null ? null : this.partie.getCarteCourante(); }
-	public int                getNbCartesRestantes()                   { return this.partie == null ? 0    : this.partie.getNbCartesRestantes(); }
-	public int                getNbFonceesRestantes()                  { return this.partie == null ? 0    : this.partie.getNbFonceesRestantes(); }
-	public boolean            estDansReseau(int numeroJoueur, int i)   { return this.partie != null && this.partie.estDansReseau(numeroJoueur, i); }
-	public ArrayList<Integer> getCasesValides(int numeroJoueur)        { return this.partie == null ? new ArrayList<Integer>() : this.partie.getCasesValides(numeroJoueur); }
-	public ArrayList<Integer> getCheminJoueur(int numeroJoueur)        { return this.partie == null ? new ArrayList<Integer>() : this.partie.getCheminJoueur(numeroJoueur); }
+	private void rafraichirFrames()
+	{
+		if (this.frameInfos != null) this.frameInfos.rafraichir();
+		if (this.framesJoueurs != null)
+			for (int i = 0; i < this.framesJoueurs.length; i++)
+				if (this.framesJoueurs[i] != null) this.framesJoueurs[i].rafraichir();
+	}
+
+	// Affiche le score de la manche qui vient de se terminer.
+	private void afficherScoresManche()
+	{
+		int      m  = this.partie.getNumeroManche();
+		Joueur[] js = this.partie.getJoueurs();
+
+		String texte = "Manche " + m + " terminée\n\n";
+		for (int i = 0; i < js.length; i++)
+			texte += "Joueur " + (i + 1) + " : " + js[i].getScoreManche(m - 1) + " points\n";
+
+		JOptionPane.showMessageDialog(null, texte);
+	}
+
+	/*-------------------------------------*/
+	/* Accès à la partie (pour l'IHM)      */
+	/*-------------------------------------*/
+	public boolean  isPartieTerminee()              { return this.partie != null && this.partie.isPartieTerminee(); }
+	public boolean  aJoue(int numeroJoueur)         { return this.partie != null && this.partie.aJoue(numeroJoueur); }
+	public boolean  estSonTour(int numeroJoueur)    { return this.partie != null && this.partie.estSonTour(numeroJoueur); }
+	public int      getJoueurCourant()              { return this.partie == null ? 0 : this.partie.getJoueurCourant(); }
+	public Carte    getCarteCourante()              { return this.partie == null ? null : this.partie.getCarteCourante(); }
+	public int      getNbFonceesRestantes()         { return this.partie == null ? 0 : this.partie.getNbFonceesRestantes(); }
+	public int      getCaseDepart(int numeroJoueur) { return this.partie == null ? -1 : this.partie.getCaseDepart(numeroJoueur); }
+	public int      getNbJoueurs()                  { return this.partie == null ? 0 : this.partie.getNbJoueurs(); }
+	public int      getNbManches()                  { return this.partie == null ? 0 : this.partie.getNbManches(); }
+	public int      getNumeroManche()               { return this.partie == null ? 0 : this.partie.getNumeroManche(); }
+	public Joueur[] getJoueurs()                    { return this.partie == null ? new Joueur[0] : this.partie.getJoueurs(); }
+
+	public ArrayList<Integer> getCasesValides(int numeroJoueur) { return this.partie == null ? new ArrayList<Integer>() : this.partie.getCasesValides(numeroJoueur); }
+	public ArrayList<Integer> getCheminJoueur(int numeroJoueur) { return this.partie == null ? new ArrayList<Integer>() : this.partie.getCheminJoueur(numeroJoueur); }
+
+	// Couleur d'un joueur pour une manche (les couleurs tournent à chaque manche).
+	public Color getCouleurJoueur(int numeroJoueur, int numeroManche)
+	{
+		if (numeroJoueur < 1) numeroJoueur = 1;
+		if (numeroManche < 1) numeroManche = 1;
+		int idx = ((numeroJoueur - 1) + (numeroManche - 1)) % COULEURS_JOUEURS.length;
+		return COULEURS_JOUEURS[idx];
+	}
 
 	public Color getCouleurJoueur(int numeroJoueur)
 	{
-		if (numeroJoueur >= 1 && numeroJoueur <= COULEURS_JOUEURS.length)
-			return COULEURS_JOUEURS[numeroJoueur - 1];
-		return Color.WHITE;
+		return getCouleurJoueur(numeroJoueur, getNumeroManche());
 	}
 
-	/*-------------------------------------*/
-	/* Accès au plateau (métier)           */
-	/*-------------------------------------*/
-	public int getLargeur() { return this.metier.getLargeur(); }
-
-	public int getHauteur() { return this.metier.getHauteur(); }
-
-	public int getArrondissement(int numCase)
+	// Gagnant(s) : meilleur total ; égalité -> meilleure manche ; sinon victoire partagée.
+	public ArrayList<Integer> getGagnants()
 	{
-		return this.metier.getArrondissement(numCase);
-	}
+		ArrayList<Integer> gagnants = new ArrayList<Integer>();
+		if (this.partie == null) return gagnants;
+		Joueur[] js = this.partie.getJoueurs();
 
-	public void affecterArrondissement(int numCase, int arrondissement)
-	{
-		this.metier.affecterArrondissement( numCase, arrondissement );
-	}
+		// Meilleur score total
+		int maxTotal = 0;
+		for (int i = 0; i < js.length; i++)
+			if (js[i].getScoreTotal() > maxTotal) maxTotal = js[i].getScoreTotal();
 
-	public void affecterStation(int numCase, int station)
-	{
-		this.metier.affecterStation(numCase, station);
-	}
+		ArrayList<Integer> candidats = new ArrayList<Integer>();
+		for (int i = 0; i < js.length; i++)
+			if (js[i].getScoreTotal() == maxTotal) candidats.add(i + 1);
 
-	public int getStation(int numCase)
-	{
-		return this.metier.getStation(numCase);
-	}
+		if (candidats.size() == 1) return candidats;
 
-	public void affecterDepart(int numCase, int depart)
-	{
-		this.metier.affecterDepart(numCase, depart);
-	}
-
-	public int getDepart(int numCase)
-	{
-		return this.metier.getDepart(numCase);
-	}
-
-	public boolean aArete(int i, int j)
-	{
-		return this.metier.getGraphe().aArete(i, j);
-	}
-
-	public int getNbAretes()
-	{
-		return this.metier.getGraphe().getNbAretes();
-	}
-
-	public void genererAretesAuto()
-	{
-		this.metier.getGraphe().genererAretesAuto(this.metier);
-	}
-
-	/*-------------------------------------*/
-	/* Images des stations (cache)         */
-	/*-------------------------------------*/
-	private Image[] stationImages = new Image[11];
-
-	public Image getImageStation(int stationNum)
-	{
-		if (stationNum < 1 || stationNum >= this.stationImages.length) return null;
-		if (this.stationImages[stationNum] == null)
+		// Égalité -> meilleur score sur une seule manche
+		int maxManche = 0;
+		for (int i = 0; i < candidats.size(); i++)
 		{
-			String chemin = UtilitaireJeu.getCheminImageStation(stationNum);
-			if (chemin != null)
-				this.stationImages[stationNum] = new ImageIcon(chemin).getImage();
+			int n = candidats.get(i);
+			if (js[n - 1].getMeilleurScoreManche() > maxManche) maxManche = js[n - 1].getMeilleurScoreManche();
 		}
-		return this.stationImages[stationNum];
+		for (int i = 0; i < candidats.size(); i++)
+		{
+			int n = candidats.get(i);
+			if (js[n - 1].getMeilleurScoreManche() == maxManche) gagnants.add(n);
+		}
+		return gagnants;
 	}
 
 	/*-------------------------------------*/
-	/* Images de fond                      */
+	/* Accès au plateau                    */
 	/*-------------------------------------*/
-	public String getImageFond()
+	public int getLargeur()             { return this.metier.getLargeur(); }
+	public int getHauteur()             { return this.metier.getHauteur(); }
+	public int getArrondissement(int i) { return this.metier.getArrondissement(i); }
+	public int getStation(int i)        { return this.metier.getStation(i); }
+
+	/*-------------------------------------*/
+	/* Images                              */
+	/*-------------------------------------*/
+	private Image[] imagesStations = new Image[11];
+
+	public Image getImageStation(int numero)
+	{
+		if (numero < 1 || numero >= this.imagesStations.length) return null;
+		if (this.imagesStations[numero] == null)
+		{
+			String chemin = UtilitaireJeu.getCheminImageStation(numero);
+			if (chemin != null) this.imagesStations[numero] = new ImageIcon(chemin).getImage();
+		}
+		return this.imagesStations[numero];
+	}
+
+	private HashMap<String, Image> imagesCartes = new HashMap<String, Image>();
+
+	// Image d'une carte (joker = numéro 7). Renvoie null si l'image manque.
+	public Image getImageCarte(Carte carte)
+	{
+		if (carte == null) return null;
+		int    numero = carte.estJoker() ? 7 : carte.getTypeStation();
+		String cle    = numero + (carte.estFoncee() ? "_f" : "_c");
+		if (!this.imagesCartes.containsKey(cle))
+		{
+			String chemin = UtilitaireJeu.getCheminImageCarte(numero, carte.estFoncee());
+			Image  img    = (chemin != null) ? new ImageIcon(chemin).getImage() : null;
+			this.imagesCartes.put(cle, img);
+		}
+		return this.imagesCartes.get(cle);
+	}
+
+	public String getImageFond()  { return chercherImage("fond.png"); }
+	public String getImageFond2() { return chercherImage("fond2.png"); }
+
+	// Cherche une image de fond dans les emplacements possibles.
+	private String chercherImage(String nom)
 	{
 		String[] chemins = {
-			"plateau/images/fond.png",
-			"images/fond.png",
-			"../plateau/images/fond.png",
-			"../../plateau/images/fond.png"
+			"plateau/images/"       + nom,
+			"images/"               + nom,
+			"../plateau/images/"    + nom,
+			"../../plateau/images/" + nom
 		};
-
 		for (String chemin : chemins)
 		{
-			java.io.File fichier = new java.io.File(chemin);
-			if (fichier.exists())
-			{
-				return fichier.getAbsolutePath();
-			}
+			File f = new File(chemin);
+			if (f.exists()) return f.getAbsolutePath();
 		}
-
-		return "plateau/images/fond.png";
-	}
-
-	public String getImageFond2()
-	{
-		String[] chemins = {
-			"plateau/images/fond2.png",
-			"images/fond2.png",
-			"../plateau/images/fond2.png",
-			"../../plateau/images/fond2.png"
-		};
-
-		for (String chemin : chemins)
-		{
-			java.io.File fichier = new java.io.File(chemin);
-			if (fichier.exists())
-			{
-				return fichier.getAbsolutePath();
-			}
-		}
-
-		return "plateau/images/fond2.png";
+		return "plateau/images/" + nom;
 	}
 
 	public static void main(String[] a)

@@ -38,34 +38,6 @@ public class GraphePlateau
 		}
 	}
 
-	public boolean aDesAretes()
-	{
-		for (int i = 0; i < matriceAretes.length; i++)
-		{
-			for (int j = 0; j < matriceAretes[i].length; j++)
-			{
-				if (matriceAretes[i][j]) return true;
-			}
-		}
-		return false;
-	}
-
-	public int getNbAretes()
-	{
-		int compteur = 0;
-		for (int i = 0; i < matriceAretes.length; i++)
-		{
-			for (int j = i + 1; j < matriceAretes.length; j++)
-			{
-				if (matriceAretes[i][j])
-				{
-					compteur++;
-				}
-			}
-		}
-		return compteur;
-	}
-
 	public void genererAretesAuto(Plateau plateau)
 	{
 		int taille = plateau.getLargeur() * plateau.getHauteur();

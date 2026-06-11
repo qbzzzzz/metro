@@ -14,6 +14,7 @@ public class PanelInfos extends JPanel implements ActionListener
 	private int        nbJoueurs;
 
 	private PanelCarte panelCarte;
+	private JLabel     lblManche;
 	private JLabel     lblPioche;
 	private JLabel[]   lblStatutJoueur;
 	private JButton[]  btnPasserJoueur;
@@ -40,6 +41,10 @@ public class PanelInfos extends JPanel implements ActionListener
 		lblTitre.setFont(gras16);
 		lblTitre.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+		this.lblManche = new JLabel("Manche — / —");
+		this.lblManche.setFont(gras12);
+		this.lblManche.setAlignmentX(Component.CENTER_ALIGNMENT);
+
 		JLabel lblCarteTitre = new JLabel("Carte commune");
 		lblCarteTitre.setFont(gras12);
 		lblCarteTitre.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -53,6 +58,8 @@ public class PanelInfos extends JPanel implements ActionListener
 		this.lblPioche.setAlignmentX(Component.CENTER_ALIGNMENT);
 
 		this.add(lblTitre);
+		this.add(Box.createVerticalStrut(6));
+		this.add(this.lblManche);
 		this.add(Box.createVerticalStrut(12));
 		this.add(lblCarteTitre);
 		this.add(Box.createVerticalStrut(4));
@@ -133,6 +140,7 @@ public class PanelInfos extends JPanel implements ActionListener
 
 	public void rafraichir()
 	{
+		this.lblManche.setText("Manche " + this.ctrl.getNumeroManche() + " / " + this.ctrl.getNbManches());
 		this.panelCarte.repaint();
 		this.lblPioche.setText(this.ctrl.getNbFonceesRestantes() + " foncée(s) restante(s)");
 
